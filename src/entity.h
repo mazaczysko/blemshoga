@@ -3,14 +3,11 @@
 
 struct entity
 {
-  uint16_t id;
-  const char *name;
+	uint16_t id;
+	const char *name;
 
-  const char *spritename;
-  ALLEGRO_BITMAP *sprite;
-
-  //Interaction callbacks
-  void ( *entityinteraction )( struct tile **entity, struct tile **tile );
-};  
+	const char *spritename;
+	ALLEGRO_BITMAP *sprite;
+};
 
 #endif
