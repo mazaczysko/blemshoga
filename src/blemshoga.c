@@ -29,7 +29,6 @@ void map_render( int x, int y, int w, int h )
 						break;
 				}
 
-				//printf( "%p\n", sprite );
 				if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
 			}
 		}
@@ -41,8 +40,6 @@ int main( )
 	ALLEGRO_KEYBOARD_STATE kbstate;
 	ALLEGRO_DISPLAY *win;
 
-
-
 	//TODO error checks
 	al_init( );
 	al_install_keyboard( );
@@ -52,8 +49,7 @@ int main( )
 	blocks_init( );
 
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
-	al_set_window_title( win, "Blemshoga indev" );
-	//al_clear_to_color( al_map_rgb( 255, 0 , 128 ) );
+	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
 
 	MAP( 0, 0, 15 ).type = TILE_BLOCK;
 	MAP( 0, 0, 15 ).tile = blocks + 1;
