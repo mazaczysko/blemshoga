@@ -5,7 +5,7 @@ struct entity
 {
 	//TODO add common tile data here
 
-	uint16_t id;
+	int id;
 	const char *name;
 
 	const char *spritename;

@@ -1,7 +1,6 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
-#include <inttypes.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include "tile.h"
@@ -10,7 +9,7 @@ struct block
 {
 	//TODO add common tile struct right here
 
-	uint16_t id;
+	int id;
 	const char *name;
 
 	//Flags
