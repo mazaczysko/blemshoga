@@ -4,7 +4,7 @@
 struct
 {
 	int width, height, depth;
-	struct tile *map;
+	struct tile **map;
 } map;
 
 extern void map_init( int width, int height, int depth );

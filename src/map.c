@@ -9,7 +9,7 @@ void map_init( int width, int height, int depth )
 	map.depth = depth;
 
 	//Won't be portable if NULL is not 0
-	map.map = (struct tile*) calloc( map.width * map.height * map.depth, sizeof( struct tile ) );
+	map.map = calloc( map.width * map.height * map.depth, sizeof( struct tile* ) );
 
 }
 

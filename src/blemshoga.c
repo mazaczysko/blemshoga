@@ -4,7 +4,6 @@
 #include <allegro5/allegro_image.h>
 #include "map.h"
 #include "tile.h"
-#include "block.h"
 
 //Renders given portion of map on screen
 //TODO add offset
@@ -19,19 +18,11 @@ void map_render( int x, int y, int w, int h )
 		{
 			for ( k = 0; k < map.depth; k++ )
 			{
-				//TODO replace this switch with tile common data access
-				switch ( MAP( i, j, k ).type )
+				if ( MAP( i, j, k ) != NULL && MAP( i, j, k )->common.type != TILE_VOID )
 				{
-					case TILE_BLOCK:
-						sprite = ((struct block*) MAP( i, j, k ).tile)->sprite;
-						break;
-
-					default:
-						sprite = NULL;
-						break;
+					sprite = MAP( i, j, k )->common.sprite;
+					if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
 				}
-
-				if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
 			}
 		}
 	}
@@ -111,23 +102,23 @@ int main( )
 
 	//TEMP test init
 	map_init( 16, 16, 16 );
-	blocks_init( );
+	tiles_init( );
 
 	//TODO error checks
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
 	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
 
 	//TEMP test
-	MAP( 0, 0, 15 ).type = TILE_BLOCK;
-	MAP( 0, 0, 15 ).tile = blocks + 1;
-	MAP( 1, 0, 15 ).type = TILE_BLOCK;
-	MAP( 1, 0, 15 ).tile = blocks + 0;
+	MAP( 0, 0, 15 ) = blocks + 1;
+	MAP( 1, 0, 15 ) = blocks + 0;
+
+	printf( "%p", MAP(0,0,15)->common.sprite );
 
 	//Enter main game loop
 	gameloop( win );
-	
+
 	//TODO error checking
-	blocks_destroy( );
+	tiles_destroy( );
 	al_destroy_display( win );
 
 	return 0;

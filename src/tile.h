@@ -1,6 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
+
 #define TILE_SIZE 32
 
 #define TILE_VOID   0
@@ -10,9 +13,33 @@
 
 struct tile
 {
-	void *tile;
-	unsigned int type;
+	//Common specification
+	struct
+	{
+		unsigned int id;
+		unsigned int type;
+		const char *name;
+		const char *spritename;
+		ALLEGRO_BITMAP *sprite;
+	} common;
+
+	//Block specification
+	struct
+	{
+		//Flags
+		unsigned int ground : 1; //Is this tile a ground tile?
+		unsigned int solid : 1; //Can entities walk through this tile?
+		unsigned int flammable : 1; //Can this tile be set on fire?
+		unsigned int : 0;
+
+		//Interaction callbacks
+		void ( *entityinteraction )( struct tile *entity, struct tile *tile );
+	} block;
 };
 
+
+extern struct tile blocks[];
+extern int tiles_init( );
+extern int tiles_destroy( );
 
 #endif
