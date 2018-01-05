@@ -1,7 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#define TILE_SIZE 64
+#define TILE_SIZE 32
 
 #define TILE_VOID   0
 #define TILE_BLOCK  1

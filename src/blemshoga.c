@@ -6,7 +6,8 @@
 #include "tile.h"
 #include "block.h"
 
-
+//Renders given portion of map on screen
+//TODO add offset
 void map_render( int x, int y, int w, int h )
 {
 	int i, j, k;
@@ -18,6 +19,7 @@ void map_render( int x, int y, int w, int h )
 		{
 			for ( k = 0; k < map.depth; k++ )
 			{
+				//TODO replace this switch with tile common data access
 				switch ( MAP( i, j, k ).type )
 				{
 					case TILE_BLOCK:
@@ -48,11 +50,15 @@ int main( )
 	map_init( 16, 16, 16 );
 	blocks_init( );
 
+	//TODO error checks
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
 	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
 
+	//TEMP test
 	MAP( 0, 0, 15 ).type = TILE_BLOCK;
 	MAP( 0, 0, 15 ).tile = blocks + 1;
+	MAP( 1, 0, 15 ).type = TILE_BLOCK;
+	MAP( 1, 0, 15 ).tile = blocks + 0;
 
 	//Game loop
 	while ( 1 )
@@ -60,10 +66,10 @@ int main( )
 		map_render( 0, 0, 16, 16 );
 		al_flip_display( );
 
+		//TODO event queue
 		al_get_keyboard_state( &kbstate );
 		if( al_key_down( &kbstate, ALLEGRO_KEY_ESCAPE ) )
 			break;
-
 	}
 
 	blocks_destroy( );

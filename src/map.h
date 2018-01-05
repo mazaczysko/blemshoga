@@ -9,6 +9,7 @@ struct
 
 extern void map_init( uint16_t width, uint16_t height, uint16_t depth );
 
+//TODO replace this macro with some inline functions
 #define MAP(x, y, z) (map.map[z + x * map.depth + y * map.depth * map.width])
 
 #endif

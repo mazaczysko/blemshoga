@@ -8,6 +8,8 @@
 
 struct block
 {
+	//TODO add common tile struct right here
+
 	uint16_t id;
 	const char *name;
 

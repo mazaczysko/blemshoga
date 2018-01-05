@@ -3,6 +3,8 @@
 
 struct entity
 {
+	//TODO add common tile data here
+
 	uint16_t id;
 	const char *name;
 
