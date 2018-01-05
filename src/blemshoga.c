@@ -37,16 +37,79 @@ void map_render( int x, int y, int w, int h )
 	}
 }
 
+
+//Returns 0 when everything is ok and 1 when some error has occurred
+int gameloop( ALLEGRO_DISPLAY *win )
+{
+	int alive = 1;
+	ALLEGRO_EVENT_QUEUE *queue = NULL;
+	ALLEGRO_EVENT ev;
+
+	if ( win == NULL )
+	{
+		//TODO error handler
+		return 1;
+	}
+
+	queue = al_create_event_queue( );
+	if ( queue == NULL )
+	{
+		//TODO error handler
+		return 1;
+	}
+
+	al_register_event_source( queue, al_get_display_event_source( win ) );
+
+	while ( alive )
+	{
+		//Handle events
+		while ( al_get_next_event( queue, &ev ) )
+		{
+			switch ( ev.type )
+			{
+				//Quit on window close
+				case ALLEGRO_EVENT_DISPLAY_CLOSE:
+					alive = 0;
+					break;
+
+				//Key down event
+				case ALLEGRO_EVENT_KEY_DOWN:
+					break;
+
+				//Key up event
+				case ALLEGRO_EVENT_KEY_UP:
+					break;
+
+				//Ignore unregistered events
+				default:
+					break;
+			}
+		}
+
+
+		//TODO all the rendering here
+		//TEMP test render
+		map_render( 0, 0, 16, 16 );
+
+		//Buffer flush
+		al_flip_display( );
+	}
+
+	al_destroy_event_queue( queue );
+
+	return 0;
+}
+
 int main( )
 {
-	ALLEGRO_KEYBOARD_STATE kbstate;
 	ALLEGRO_DISPLAY *win;
 
-	//TODO error checks
+	//TODO error checks - it crashes when display is not present, yay!
 	al_init( );
 	al_install_keyboard( );
 	al_init_image_addon( );
 
+	//TEMP test init
 	map_init( 16, 16, 16 );
 	blocks_init( );
 
@@ -60,19 +123,12 @@ int main( )
 	MAP( 1, 0, 15 ).type = TILE_BLOCK;
 	MAP( 1, 0, 15 ).tile = blocks + 0;
 
-	//Game loop
-	while ( 1 )
-	{
-		map_render( 0, 0, 16, 16 );
-		al_flip_display( );
-
-		//TODO event queue
-		al_get_keyboard_state( &kbstate );
-		if( al_key_down( &kbstate, ALLEGRO_KEY_ESCAPE ) )
-			break;
-	}
-
+	//Enter main game loop
+	gameloop( win );
+	
+	//TODO error checking
 	blocks_destroy( );
+	al_destroy_display( win );
 
 	return 0;
 }
