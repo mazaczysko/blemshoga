@@ -8,8 +8,9 @@ struct
 } map;
 
 extern void map_init( int width, int height, int depth );
-
-//TODO replace this macro with some inline functions
-#define MAP(x, y, z) (map.map[z + x * map.depth + y * map.depth * map.width])
+extern struct tile** maptile( int x, int y, int z );
+extern struct tile** maptoptile( int x, int y );
+extern struct tile** mapfreetile( int x, int y );
+extern struct tile** mapputtile( int x, int y, struct tile* tile );
 
 #endif

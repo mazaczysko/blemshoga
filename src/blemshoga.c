@@ -9,6 +9,7 @@
 //TODO add offset
 void map_render( int x, int y, int w, int h )
 {
+	struct tile ** t;
 	int i, j, k;
 	ALLEGRO_BITMAP *sprite;
 
@@ -18,9 +19,10 @@ void map_render( int x, int y, int w, int h )
 		{
 			for ( k = 0; k < map.depth; k++ )
 			{
-				if ( MAP( i, j, k ) != NULL && MAP( i, j, k )->common.type != TILE_VOID )
+				t = maptile( i, j, k );
+				if (  t != NULL && *t != NULL && ( *t )->common.type !=  TILE_VOID )
 				{
-					sprite = MAP( i, j, k )->common.sprite;
+					sprite = ( *t )->common.sprite;
 					if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
 				}
 			}
@@ -109,10 +111,8 @@ int main( )
 	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
 
 	//TEMP test
-	MAP( 0, 0, 15 ) = blocks + 1;
-	MAP( 1, 0, 15 ) = blocks + 0;
-
-	printf( "%p", MAP(0,0,15)->common.sprite );
+	mapputtile( 0, 0, blocks + 1 );
+	mapputtile( 1, 0, blocks + 0 );
 
 	//Enter main game loop
 	gameloop( win );
