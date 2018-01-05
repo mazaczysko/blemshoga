@@ -10,12 +10,12 @@ void map_init( int width, int height, int depth )
 
 	//Won't be portable if NULL is not 0
 	map.map = calloc( map.width * map.height * map.depth, sizeof( struct tile* ) );
-
 }
 
 //Returns pointer to map tile
 struct tile** maptile( int x, int y, int z )
 {
+	if ( x > map.width || y > map.height || z > map.depth || x < 0 || y < 0 || z < 0 ) return NULL;
 	return map.map + z + x * map.depth + y * map.depth * map.width;
 }
 
@@ -28,7 +28,7 @@ struct tile** maptoptile( int x, int y )
 	for ( i = map.depth - 1; i >= 0; i-- )
 	{
 		t = maptile( x, y, i );
-		if ( t != NULL &&  ( *t )->common.type != TILE_VOID )
+		if ( t != NULL && *t != NULL && ( *t )->common.type != TILE_VOID )
 		 	return t;
 	}
 
@@ -59,6 +59,21 @@ struct tile** mapputtile( int x, int y, struct tile* tile )
 	if( t != NULL )
 	{
 		*t = tile;
+		return t;
+	}
+
+	return NULL;
+}
+
+//Moves map tile
+struct tile** mapmovetile( struct tile** tile, int x, int y )
+{
+	struct tile **t = mapfreetile( x, y );
+
+	if( t != NULL && tile != NULL )
+	{
+		*t = *tile;
+		*tile = NULL;
 		return t;
 	}
 
