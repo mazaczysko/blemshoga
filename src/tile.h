@@ -35,10 +35,22 @@ struct tile
 		//Interaction callbacks
 		void ( *entityinteraction )( struct tile *entity, struct tile *tile );
 	} block;
+
+
 };
+
+struct
+{
+	int x;
+	int y;
+
+	struct tile* tile;
+
+} player;
 
 
 extern struct tile blocks[];
+extern struct tile entities[];
 extern int tiles_init( );
 extern int tiles_destroy( );
 

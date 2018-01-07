@@ -85,6 +85,37 @@ void up( ALLEGRO_EVENT ev )
 	}
 }
 
+
+void playerwalk( )
+{
+	if( key[DOWN] && player.y + 1 < map.height && player.y + 1 > 0 )
+	{
+		mapmovetile( maptoptile( player.x, player.y ), player.x, player.y + 1 );
+		player.y++;
+		map_render( player.x, player.y, 16, 16 );
+	}
+
+	if( key[RIGHT] && player.x + 1 < map.width && player.x + 1 > 0 )
+	{
+		mapmovetile( maptoptile( player.x, player.y ), player.x + 1, player.y );
+		player.x++;
+		map_render( player.x, player.y, 16, 16 );
+	}
+
+	if( key[LEFT] && player.x - 1 >= 0 )
+	{
+		mapmovetile( maptoptile( player.x, player.y ), player.x - 1, player.y );
+		player.x--;
+		map_render( player.x, player.y, 16, 16 );
+	}
+	if( key[UP] && player.y - 1 >= 0 )
+	{
+		mapmovetile( maptoptile( player.x, player.y ), player.x, player.y - 1);
+		player.y--;
+		map_render( player.x, player.y, 16, 16 );
+	}
+}
+
 //Returns 0 when everything is ok and 1 when some error has occurred
 int gameloop( ALLEGRO_DISPLAY *win )
 {
@@ -118,7 +149,6 @@ int gameloop( ALLEGRO_DISPLAY *win )
 				//Quit on window close
 				case ALLEGRO_EVENT_DISPLAY_CLOSE:
 					alive = 0;
-					printf("dupa\n" );
 					break;
 
 				//Key down event
@@ -138,32 +168,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 		}
 
-		if( key[DOWN] && y + 1 < map.height && y + 1 > 0 )
-		{
-			mapmovetile( maptoptile( x, y ), x, y + 1 );
-			y++;
-			map_render( x, y, 16, 16 );
-		}
-
-		if( key[RIGHT] && x + 1 < map.width && x + 1 > 0 )
-		{
-			mapmovetile( maptoptile( x, y ), x + 1, y );
-			x++;
-			map_render( x, y, 16, 16 );
-		}
-
-		if( key[LEFT] && x - 1 >= 0 )
-		{
-			mapmovetile( maptoptile( x, y ), x - 1, y );
-			x--;
-			map_render( x, y, 16, 16 );
-		}
-		if( key[UP] && y - 1 >= 0 )
-		{
-			mapmovetile( maptoptile( x, y ), x, y - 1);
-			y--;
-			map_render( x, y, 16, 16 );
-		}
+		playerwalk( );
 
 		//TODO all the rendering here
 		//TEMP test render
@@ -181,7 +186,6 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( )
 {
-//	ALLEGRO_KEYBOARD_STATE *kbstate;
 	ALLEGRO_DISPLAY *win;
 
 
@@ -191,6 +195,9 @@ int main( )
 	al_init_image_addon( );
 
 	//TEMP test init
+	player.x = 3;
+	player.y = 0;
+	player.tile = entities;
 	map_init( 16, 16, 16 );
 	tiles_init( );
 
@@ -201,6 +208,7 @@ int main( )
 	//TEMP test
 	mapputtile( 0, 0, blocks + 1 );
 	mapputtile( 1, 0, blocks + 0 );
+	mapputtile( player.x, player.y, player.tile );
 
 	//Enter main game loop
 	gameloop( win );
