@@ -5,6 +5,11 @@
 #include "map.h"
 #include "tile.h"
 
+enum MYKEYS { UP, DOWN, LEFT, RIGHT };
+
+bool key[4] = { false, false, false , false };
+
+
 //Renders given portion of map on screen
 //TODO add offset
 void map_render( int x, int y, int w, int h )
@@ -12,7 +17,7 @@ void map_render( int x, int y, int w, int h )
 	struct tile ** t;
 	int i, j, k;
 	ALLEGRO_BITMAP *sprite;
-
+	al_clear_to_color( al_map_rgb( 0, 0, 0) );
 	for ( i = 0; i < x + w && i < map.width; i++ )
 	{
 		for ( j = 0; j < y + h && j < map.height; j++ )
@@ -30,11 +35,60 @@ void map_render( int x, int y, int w, int h )
 	}
 }
 
+void dwn( ALLEGRO_EVENT ev )
+{
+	switch( ev.keyboard.keycode )
+	{
+		case ALLEGRO_KEY_UP:
+			key[UP] = true;
+			break;
+
+		case ALLEGRO_KEY_DOWN:
+			key[DOWN] = true;
+			break;
+
+		case ALLEGRO_KEY_RIGHT:
+			key[RIGHT] = true;
+			break;
+
+		case ALLEGRO_KEY_LEFT:
+			key[LEFT] = true;
+			break;
+
+		default:
+			break;
+	}
+}
+
+void up( ALLEGRO_EVENT ev )
+{
+	switch( ev.keyboard.keycode )
+	{
+		case ALLEGRO_KEY_UP:
+			key[UP] = false;
+			break;
+
+		case ALLEGRO_KEY_DOWN:
+			key[DOWN] = false;
+			break;
+
+		case ALLEGRO_KEY_RIGHT:
+			key[RIGHT] = false;
+			break;
+
+		case ALLEGRO_KEY_LEFT:
+			key[LEFT] = false;
+			break;
+
+		default:
+			break;
+	}
+}
 
 //Returns 0 when everything is ok and 1 when some error has occurred
 int gameloop( ALLEGRO_DISPLAY *win )
 {
-	int alive = 1;
+	int alive = 1, x = 0, y = 0;
 	ALLEGRO_EVENT_QUEUE *queue = NULL;
 	ALLEGRO_EVENT ev;
 
@@ -52,6 +106,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 	}
 
 	al_register_event_source( queue, al_get_display_event_source( win ) );
+	al_register_event_source( queue, al_get_keyboard_event_source( ) );
 
 	while ( alive )
 	{
@@ -63,29 +118,60 @@ int gameloop( ALLEGRO_DISPLAY *win )
 				//Quit on window close
 				case ALLEGRO_EVENT_DISPLAY_CLOSE:
 					alive = 0;
+					printf("dupa\n" );
 					break;
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
+					dwn( ev );
 					break;
 
 				//Key up event
 				case ALLEGRO_EVENT_KEY_UP:
+					up( ev );
 					break;
 
 				//Ignore unregistered events
 				default:
 					break;
 			}
+
 		}
 
+		if( key[DOWN] && y + 1 < map.height && y + 1 > 0 )
+		{
+			mapmovetile( maptoptile( x, y ), x, y + 1 );
+			y++;
+			map_render( x, y, 16, 16 );
+		}
+
+		if( key[RIGHT] && x + 1 < map.width && x + 1 > 0 )
+		{
+			mapmovetile( maptoptile( x, y ), x + 1, y );
+			x++;
+			map_render( x, y, 16, 16 );
+		}
+
+		if( key[LEFT] && x - 1 >= 0 )
+		{
+			mapmovetile( maptoptile( x, y ), x - 1, y );
+			x--;
+			map_render( x, y, 16, 16 );
+		}
+		if( key[UP] && y - 1 >= 0 )
+		{
+			mapmovetile( maptoptile( x, y ), x, y - 1);
+			y--;
+			map_render( x, y, 16, 16 );
+		}
 
 		//TODO all the rendering here
 		//TEMP test render
-		map_render( 0, 0, 16, 16 );
+		map_render( x, y, 16, 16 );
 
 		//Buffer flush
 		al_flip_display( );
+
 	}
 
 	al_destroy_event_queue( queue );
@@ -95,7 +181,9 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( )
 {
+//	ALLEGRO_KEYBOARD_STATE *kbstate;
 	ALLEGRO_DISPLAY *win;
+
 
 	//TODO error checks - it crashes when display is not present, yay!
 	al_init( );
