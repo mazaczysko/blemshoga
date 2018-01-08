@@ -5,10 +5,6 @@
 #include "map.h"
 #include "tile.h"
 
-enum MYKEYS { UP, DOWN, LEFT, RIGHT };
-
-bool key[4] = { false, false, false , false };
-
 
 //Renders given portion of map on screen
 //TODO add offset
@@ -35,84 +31,49 @@ void map_render( int x, int y, int w, int h )
 	}
 }
 
-void dwn( ALLEGRO_EVENT ev )
-{
-	switch( ev.keyboard.keycode )
-	{
-		case ALLEGRO_KEY_UP:
-			key[UP] = true;
-			break;
 
+void playerwalk( ALLEGRO_EVENT ev )
+{
+	switch ( ev.keyboard.keycode )
+	{
 		case ALLEGRO_KEY_DOWN:
-			key[DOWN] = true;
+			if( player.y + 1 < map.height && player.y + 1 > 0 )
+			{
+				mapmovetile( maptoptile( player.x, player.y ), player.x, player.y + 1 );
+				player.y++;
+				map_render( player.x, player.y, 16, 16 );
+			}
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			key[RIGHT] = true;
+			if( player.x + 1 < map.width && player.x + 1 > 0 )
+			{
+				mapmovetile( maptoptile( player.x, player.y ), player.x + 1, player.y );
+				player.x++;
+				map_render( player.x, player.y, 16, 16 );
+			}
 			break;
 
 		case ALLEGRO_KEY_LEFT:
-			key[LEFT] = true;
+			if( player.x - 1 >= 0 )
+			{
+				mapmovetile( maptoptile( player.x, player.y ), player.x - 1, player.y );
+				player.x--;
+				map_render( player.x, player.y, 16, 16 );
+			}
+			break;
+
+		case ALLEGRO_KEY_UP:
+			if( player.y - 1 >= 0 )
+			{
+				mapmovetile( maptoptile( player.x, player.y ), player.x, player.y - 1);
+				player.y--;
+				map_render( player.x, player.y, 16, 16 );
+			}
 			break;
 
 		default:
 			break;
-	}
-}
-
-void up( ALLEGRO_EVENT ev )
-{
-	switch( ev.keyboard.keycode )
-	{
-		case ALLEGRO_KEY_UP:
-			key[UP] = false;
-			break;
-
-		case ALLEGRO_KEY_DOWN:
-			key[DOWN] = false;
-			break;
-
-		case ALLEGRO_KEY_RIGHT:
-			key[RIGHT] = false;
-			break;
-
-		case ALLEGRO_KEY_LEFT:
-			key[LEFT] = false;
-			break;
-
-		default:
-			break;
-	}
-}
-
-
-void playerwalk( )
-{
-	if( key[DOWN] && player.y + 1 < map.height && player.y + 1 > 0 )
-	{
-		mapmovetile( maptoptile( player.x, player.y ), player.x, player.y + 1 );
-		player.y++;
-		map_render( player.x, player.y, 16, 16 );
-	}
-
-	if( key[RIGHT] && player.x + 1 < map.width && player.x + 1 > 0 )
-	{
-		mapmovetile( maptoptile( player.x, player.y ), player.x + 1, player.y );
-		player.x++;
-		map_render( player.x, player.y, 16, 16 );
-	}
-
-	if( key[LEFT] && player.x - 1 >= 0 )
-	{
-		mapmovetile( maptoptile( player.x, player.y ), player.x - 1, player.y );
-		player.x--;
-		map_render( player.x, player.y, 16, 16 );
-	}
-	if( key[UP] && player.y - 1 >= 0 )
-	{
-		mapmovetile( maptoptile( player.x, player.y ), player.x, player.y - 1);
-		player.y--;
-		map_render( player.x, player.y, 16, 16 );
 	}
 }
 
@@ -153,12 +114,11 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
-					dwn( ev );
+					playerwalk( ev );
 					break;
 
 				//Key up event
 				case ALLEGRO_EVENT_KEY_UP:
-					up( ev );
 					break;
 
 				//Ignore unregistered events
@@ -167,8 +127,6 @@ int gameloop( ALLEGRO_DISPLAY *win )
 			}
 
 		}
-
-		playerwalk( );
 
 		//TODO all the rendering here
 		//TEMP test render
@@ -195,7 +153,7 @@ int main( )
 	al_init_image_addon( );
 
 	//TEMP test init
-	player.x = 3;
+	player.x = 2;
 	player.y = 0;
 	player.tile = entities;
 	map_init( 16, 16, 16 );
