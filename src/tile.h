@@ -39,14 +39,14 @@ struct tile
 
 };
 
-struct
+struct entity
 {
 	int x;
 	int y;
 
 	struct tile* tile;
 
-} player;
+};
 
 
 extern struct tile blocks[];

@@ -5,6 +5,7 @@
 #include "map.h"
 #include "tile.h"
 
+struct entity player;
 
 //Renders given portion of map on screen
 //TODO add offset
@@ -32,43 +33,43 @@ void map_render( int x, int y, int w, int h )
 }
 
 
-void playerwalk( ALLEGRO_EVENT ev )
+void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 {
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-			if( player.y + 1 < map.height && player.y + 1 > 0 )
+			if( entity->y + 1 < map.height && entity->y + 1 > 0 )
 			{
-				mapmovetile( maptoptile( player.x, player.y ), player.x, player.y + 1 );
-				player.y++;
-				map_render( player.x, player.y, 16, 16 );
+				mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 );
+				entity->y++;
+				map_render( entity->x, entity->y, 16, 16 );
 			}
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if( player.x + 1 < map.width && player.x + 1 > 0 )
+			if( entity->x + 1 < map.width && entity->x + 1 > 0 )
 			{
-				mapmovetile( maptoptile( player.x, player.y ), player.x + 1, player.y );
-				player.x++;
-				map_render( player.x, player.y, 16, 16 );
+				mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y );
+				entity->x++;
+				map_render( entity->x, entity->y, 16, 16 );
 			}
 			break;
 
 		case ALLEGRO_KEY_LEFT:
-			if( player.x - 1 >= 0 )
+			if( entity->x - 1 >= 0 )
 			{
-				mapmovetile( maptoptile( player.x, player.y ), player.x - 1, player.y );
-				player.x--;
-				map_render( player.x, player.y, 16, 16 );
+				mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y );
+				entity->x--;
+				map_render( entity->x, entity->y, 16, 16 );
 			}
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if( player.y - 1 >= 0 )
+			if( entity->y - 1 >= 0 )
 			{
-				mapmovetile( maptoptile( player.x, player.y ), player.x, player.y - 1);
-				player.y--;
-				map_render( player.x, player.y, 16, 16 );
+				mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1);
+				entity->y--;
+				map_render( entity->x, entity->y, 16, 16 );
 			}
 			break;
 
@@ -114,7 +115,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
-					playerwalk( ev );
+					entitymove( ev, &player );
 					break;
 
 				//Key up event
