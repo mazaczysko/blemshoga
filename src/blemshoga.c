@@ -38,39 +38,26 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-			if( entity->y + 1 < map.height && entity->y + 1 > 0 )
-			{
-				mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 );
+			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
 				entity->y++;
-				map_render( entity->x, entity->y, 16, 16 );
-			}
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if( entity->x + 1 < map.width && entity->x + 1 > 0 )
-			{
-				mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y );
+			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL)
 				entity->x++;
-				map_render( entity->x, entity->y, 16, 16 );
-			}
-			break;
+				break;
+
 
 		case ALLEGRO_KEY_LEFT:
-			if( entity->x - 1 >= 0 )
-			{
-				mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y );
+			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
 				entity->x--;
-				map_render( entity->x, entity->y, 16, 16 );
-			}
+
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if( entity->y - 1 >= 0 )
-			{
-				mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1);
+			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
 				entity->y--;
-				map_render( entity->x, entity->y, 16, 16 );
-			}
+
 			break;
 
 		default:

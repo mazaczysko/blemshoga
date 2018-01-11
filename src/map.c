@@ -68,6 +68,9 @@ struct tile** mapputtile( int x, int y, struct tile* tile )
 //Moves map tile
 struct tile** mapmovetile( struct tile** tile, int x, int y )
 {
+	if( x >= map.width || x < 0 || y >= map.width || y < 0 )
+		return NULL;
+
 	struct tile **t = mapfreetile( x, y );
 
 	if( t != NULL && tile != NULL )
