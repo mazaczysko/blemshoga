@@ -38,24 +38,24 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
+		if ( mapissolid( entity->x, entity->y + 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
 				entity->y++;
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL)
+			if ( mapissolid( entity->x + 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
 				entity->x++;
 				break;
 
 
 		case ALLEGRO_KEY_LEFT:
-			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
+			if ( mapissolid( entity->x - 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
 				entity->x--;
 
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if ( mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
+			if ( mapissolid( entity->x, entity->y - 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
 				entity->y--;
 
 			break;
@@ -153,7 +153,15 @@ int main( )
 
 	//TEMP test
 	mapputtile( 0, 0, blocks + 1 );
-	mapputtile( 1, 0, blocks + 0 );
+	for( int i = 1; i < map.width; i++ )
+		mapputtile( i, 0, blocks + 0 );
+
+	for( int i = 2; i < map.width/2; i++ )
+		mapputtile( i, 2, blocks + 1 );
+
+	for( int i = 3; i < map.height; i++ )
+		mapputtile( map.width/2 - 1, i, blocks + 1 );
+
 	mapputtile( player.x, player.y, player.tile );
 
 	//Enter main game loop

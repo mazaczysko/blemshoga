@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "map.h"
 #include "tile.h"
+#include <stdio.h>
 
 void map_init( int width, int height, int depth )
 {
@@ -81,4 +82,22 @@ struct tile** mapmovetile( struct tile** tile, int x, int y )
 	}
 
 	return NULL;
+}
+
+int mapissolid( int x, int y )
+{
+	struct tile **t;
+	int i;
+
+	for( i = 0; i < map.depth; i++ )
+	{
+		t = maptile( x, y, i );
+
+		if( t != NULL && *t != NULL && *t != TILE_VOID)
+			if( (*t)->block.solid == 1 )
+				return 0;
+
+	}
+
+return 1;
 }
