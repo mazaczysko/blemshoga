@@ -132,7 +132,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( )
 {
-	srand( time( NULL ) ); 
+	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
 
@@ -168,6 +168,8 @@ int main( )
 	mapmakeroom( 0 , map.height , 6, 6, 0 );	//North
 	mapmakeroom( map.width - 5, map.height - 5, 5, 5, 3 );	//East
 	mapmakeroom( map.width , 0, 6, 6, 2 );	//West
+
+	*maptile( 3, 4, 0 ) = blocks;
 
 
 	mapputtile( player.x, player.y, player.tile );

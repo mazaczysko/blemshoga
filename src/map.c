@@ -154,7 +154,7 @@ int mapmakeroom( int x, int y, int maxwidth, int maxheight, int dir )
 	{
 		for( int j = y; j < yend; j++ )
 		{
-			mapputtile( i, j, blocks + 1 );
+			*maptile( i, j, 0 ) = blocks + 1;
 		}
 	}
 
@@ -162,7 +162,7 @@ int mapmakeroom( int x, int y, int maxwidth, int maxheight, int dir )
 	{
 		for( int j = y + 1; j < yend - 1; j++ )
 		{
-			mapputtile( i, j, blocks );
+			*maptile( i, j, 0 ) = blocks;
 		}
 	}
 
