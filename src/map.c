@@ -2,6 +2,7 @@
 #include "map.h"
 #include "tile.h"
 #include <stdio.h>
+#include <time.h>
 
 void map_init( int width, int height, int depth )
 {
@@ -100,4 +101,70 @@ int mapissolid( int x, int y )
 	}
 
 return 1;
+}
+
+int rangedrandom( int min, int max )
+{
+	return rand( ) % ( max + 1 - min ) + min;
+}
+
+int mapmakeroom( int x, int y, int maxwidth, int maxheight, int dir )
+{
+	int minwidth = 4;
+	int minheight = 4;
+
+	int xend = x;
+	int yend = y;
+
+	int width = rangedrandom( minwidth, maxwidth );
+	int height = rangedrandom( minheight, maxheight );
+
+	switch( dir )
+	{
+		//North
+		case 0:
+			y -= height;
+			xend += width;
+			break;
+
+		//South
+		case 1:
+			yend += height;
+			xend += width;
+			break;
+
+		//West
+		case 2:
+			x -= width;
+			yend += height;
+			break;
+
+		//East
+		case 3:
+			xend += width;
+			yend += height;
+			break;
+
+		default:
+			break;
+
+	}
+
+	for( int i = x; i < xend; i++ )
+	{
+		for( int j = y; j < yend; j++ )
+		{
+			mapputtile( i, j, blocks + 1 );
+		}
+	}
+
+	for( int i = x + 1; i < xend - 1; i++ )
+	{
+		for( int j = y + 1; j < yend - 1; j++ )
+		{
+			mapputtile( i, j, blocks );
+		}
+	}
+
+return 0;
 }

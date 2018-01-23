@@ -132,6 +132,8 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( )
 {
+	srand( time( NULL ) ); 
+
 	ALLEGRO_DISPLAY *win;
 
 
@@ -141,26 +143,32 @@ int main( )
 	al_init_image_addon( );
 
 	//TEMP test init
-	player.x = 2;
-	player.y = 0;
-	player.tile = entities;
 	map_init( 16, 16, 16 );
 	tiles_init( );
+	player.x = map.width / 2;
+	player.y = map.height / 2;
+	player.tile = entities;
 
 	//TODO error checks
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
 	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
 
 	//TEMP test
-	mapputtile( 0, 0, blocks + 1 );
-	for( int i = 1; i < map.width; i++ )
-		mapputtile( i, 0, blocks + 0 );
+	// mapputtile( 0, 0, blocks + 1 );
+	// for( int i = 1; i < map.width; i++ )
+	// 	mapputtile( i, 0, blocks + 0 );
+    //
+	// for( int i = 2; i < map.width/2; i++ )
+	// 	mapputtile( i, 2, blocks + 1 );
+    //
+	// for( int i = 3; i < map.height; i++ )
+	// 	mapputtile( map.width/2 - 1, i, blocks + 1 );
 
-	for( int i = 2; i < map.width/2; i++ )
-		mapputtile( i, 2, blocks + 1 );
+	mapmakeroom( 0 , 0, 6, 6, 1 );	//South
+	mapmakeroom( 0 , map.height , 6, 6, 0 );	//North
+	mapmakeroom( map.width - 5, map.height - 5, 5, 5, 3 );	//East
+	mapmakeroom( map.width , 0, 6, 6, 2 );	//West
 
-	for( int i = 3; i < map.height; i++ )
-		mapputtile( map.width/2 - 1, i, blocks + 1 );
 
 	mapputtile( player.x, player.y, player.tile );
 

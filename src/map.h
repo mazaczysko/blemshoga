@@ -14,4 +14,5 @@ extern struct tile** mapfreetile( int x, int y );
 extern struct tile** mapputtile( int x, int y, struct tile* tile );
 extern struct tile** mapmovetile( struct tile** tile, int x, int y );
 extern int mapissolid( int x, int y );
+extern int mapmakeroom( int x, int y, int maxwidth, int maxheight, int dir );
 #endif
