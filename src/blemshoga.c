@@ -38,26 +38,36 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-		if ( !entitypass( entity->x, entity->y + 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
-				entity->y++;
+		if ( !entitypass( entity->x, entity->y + 1, 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
+		{
+			entitypass( entity->x, entity->y, 0 );
+			entity->y++;
+		}
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if ( !entitypass( entity->x + 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x + 1, entity->y, 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
+			{
+				entitypass( entity->x, entity->y, 0 );
 				entity->x++;
+			}
 				break;
 
 
 		case ALLEGRO_KEY_LEFT:
-			if ( !entitypass( entity->x - 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x - 1, entity->y , 1) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
+			{
+				entitypass( entity->x, entity->y, 0 );
 				entity->x--;
-
+			}
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if ( !entitypass( entity->x, entity->y - 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
+			if ( !entitypass( entity->x, entity->y - 1 , 1) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
+			{
+				entitypass( entity->x, entity->y, 0 );
 				entity->y--;
-
+			}
 			break;
 
 		default:

@@ -2,9 +2,12 @@
 #include <allegro5/allegro_image.h>
 #include "tile.h"
 
-void doorint( struct tile **tile )
+void doorint( struct tile **tile, int whence )
 {
-	*tile = blocks + 3;
+	if( whence )
+		*tile = blocks + 3;
+	else
+		*tile = blocks + 2;
 }
 
 struct tile blocks[] =
@@ -12,7 +15,7 @@ struct tile blocks[] =
 	{ { 0, TILE_BLOCK, "stone floor", "./resources/blocks/floor_stone.png", NULL }, { 1, 0, 0, NULL } },
 	{ { 1, TILE_BLOCK, "stone wall", "./resources/blocks/wall_stone.png", NULL }, { 0, 1, 0, NULL } },
 	{ { 2, TILE_BLOCK, "closed door", "./resources/blocks/door_closed.png", NULL }, { 0, 1, 0, &doorint } },
-	{ { 3, TILE_BLOCK, "opened door", "./resources/blocks/door_opened.png", NULL }, { 0, 0, 0, NULL } },
+	{ { 3, TILE_BLOCK, "opened door", "./resources/blocks/door_opened.png", NULL }, { 0, 0, 0, &doorint } },
 };
 #define BLOCK_CNT ( sizeof( blocks ) / sizeof( blocks[0] ) )
 
