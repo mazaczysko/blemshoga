@@ -103,6 +103,28 @@ int mapissolid( int x, int y )
 return 1;
 }
 
+int entitypass( int x, int y )
+{
+	struct tile **t;
+	int i;
+
+	if( x >= map.width || y >= map.height || x < 0 || y < 0 )
+		return 1;
+
+	for( i = 0; i < map.depth; i++ )
+	{
+		t = maptile( x, y, i );
+
+		if( t != NULL && *t != NULL && *t != TILE_VOID && (*t)->block.entityinteraction != NULL )
+			(*t)->block.entityinteraction( t );
+	}
+
+	if( !mapissolid( x, y ) )
+		return 1;
+
+	return 0;
+}
+
 int rangedrandom( int min, int max )
 {
 	return rand( ) % ( max + 1 - min ) + min;

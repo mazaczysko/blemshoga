@@ -33,7 +33,7 @@ struct tile
 		unsigned int : 0;
 
 		//Interaction callbacks
-		void ( *entityinteraction )( struct tile *entity, struct tile *tile );
+		void ( *entityinteraction )( struct tile **tile );
 	} block;
 
 

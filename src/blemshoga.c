@@ -38,24 +38,24 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-		if ( mapissolid( entity->x, entity->y + 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
+		if ( !entitypass( entity->x, entity->y + 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
 				entity->y++;
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if ( mapissolid( entity->x + 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x + 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
 				entity->x++;
 				break;
 
 
 		case ALLEGRO_KEY_LEFT:
-			if ( mapissolid( entity->x - 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x - 1, entity->y ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
 				entity->x--;
 
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if ( mapissolid( entity->x, entity->y - 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
+			if ( !entitypass( entity->x, entity->y - 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
 				entity->y--;
 
 			break;
@@ -146,7 +146,7 @@ int main( )
 	map_init( 16, 16, 16 );
 	tiles_init( );
 	player.x = map.width / 2;
-	player.y = map.height / 2;
+	player.y = map.height / 2 + 2 ;
 	player.tile = entities;
 
 	//TODO error checks
@@ -158,18 +158,19 @@ int main( )
 	// for( int i = 1; i < map.width; i++ )
 	// 	mapputtile( i, 0, blocks + 0 );
     //
-	// for( int i = 2; i < map.width/2; i++ )
-	// 	mapputtile( i, 2, blocks + 1 );
+	 for( int i = 0; i < map.width; i++ )
+	 	mapputtile( i, map.height / 2, blocks + 1 );
     //
 	// for( int i = 3; i < map.height; i++ )
 	// 	mapputtile( map.width/2 - 1, i, blocks + 1 );
 
-	mapmakeroom( 0 , 0, 6, 6, 1 );	//South
+	mapmakeroom( 0 , 0, 5, 5, 1 );	//South
 	mapmakeroom( 0 , map.height , 6, 6, 0 );	//North
 	mapmakeroom( map.width - 5, map.height - 5, 5, 5, 3 );	//East
 	mapmakeroom( map.width , 0, 6, 6, 2 );	//West
 
-	*maptile( 3, 4, 0 ) = blocks;
+	*maptile( map.width / 2 , map.height / 2, 0 ) = blocks;
+	*maptile( map.width / 2 , map.height / 2, 1 ) = blocks + 2;
 
 
 	mapputtile( player.x, player.y, player.tile );
