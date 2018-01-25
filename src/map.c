@@ -103,7 +103,7 @@ int mapissolid( int x, int y )
 return 1;
 }
 
-int entitypass( int x, int y, int whence )
+int entitypass( int x, int y, int whence, struct entity *entity )
 {
 	struct tile **t;
 	int i;
@@ -117,6 +117,9 @@ int entitypass( int x, int y, int whence )
 
 		if( t != NULL && *t != NULL && *t != TILE_VOID && (*t)->block.entityinteraction != NULL )
 			(*t)->block.entityinteraction( t, whence );
+
+		if( entity != NULL && t != NULL && *t != NULL && *t != TILE_VOID && (*t)->entity.entityinteraction != NULL )
+			(*t)->entity.entityinteraction( t, entity );
 	}
 
 	if( !mapissolid( x, y ) )

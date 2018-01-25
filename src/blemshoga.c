@@ -6,6 +6,7 @@
 #include "tile.h"
 
 struct entity player;
+struct entity rats[10];
 
 //Renders given portion of map on screen
 //TODO add offset
@@ -38,34 +39,34 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-		if ( !entitypass( entity->x, entity->y + 1, 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
+		if ( !entitypass( entity->x, entity->y + 1, 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
 		{
-			entitypass( entity->x, entity->y, 0 );
+			entitypass( entity->x, entity->y, 0, NULL );
 			entity->y++;
 		}
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if ( !entitypass( entity->x + 1, entity->y, 1 ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x + 1, entity->y, 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
 			{
-				entitypass( entity->x, entity->y, 0 );
+				entitypass( entity->x, entity->y, 0, NULL );
 				entity->x++;
 			}
 				break;
 
 
 		case ALLEGRO_KEY_LEFT:
-			if ( !entitypass( entity->x - 1, entity->y , 1) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
+			if ( !entitypass( entity->x - 1, entity->y , 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
 			{
-				entitypass( entity->x, entity->y, 0 );
+				entitypass( entity->x, entity->y, 0, NULL );
 				entity->x--;
 			}
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if ( !entitypass( entity->x, entity->y - 1 , 1) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
+			if ( !entitypass( entity->x, entity->y - 1 , 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
 			{
-				entitypass( entity->x, entity->y, 0 );
+				entitypass( entity->x, entity->y, 0, NULL );
 				entity->y--;
 			}
 			break;
@@ -73,6 +74,14 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 		default:
 			break;
 	}
+}
+
+void spawn( int x, int y, struct entity *entity )
+{
+	struct tile **t = mapfreetile( x, y );
+	*t = entity->tile;
+	(*t)->entity.entity = entity;
+
 }
 
 //Returns 0 when everything is ok and 1 when some error has occurred
@@ -132,7 +141,6 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 		//Buffer flush
 		al_flip_display( );
-
 	}
 
 	al_destroy_event_queue( queue );
@@ -158,6 +166,11 @@ int main( )
 	player.x = map.width / 2;
 	player.y = map.height / 2 + 2 ;
 	player.tile = entities;
+	player.dmg = 15;
+	rats[0].x = 10;
+	rats[0].y = 7;
+	rats[0].hp = entities[1].entity.hp;
+	rats[0].tile = entities + 1;
 
 	//TODO error checks
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
@@ -184,6 +197,8 @@ int main( )
 
 
 	mapputtile( player.x, player.y, player.tile );
+
+	spawn( rats[0].x, rats[0].y, rats );
 
 	//Enter main game loop
 	gameloop( win );

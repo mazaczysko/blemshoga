@@ -34,7 +34,20 @@ struct tile
 
 		//Interaction callbacks
 		void ( *entityinteraction )( struct tile **tile, int );
+
 	} block;
+
+	struct
+	{
+		int hp;
+		int dmg;
+
+		struct entity *entity;
+
+		//Interaction callbacks
+		void ( *entityinteraction )( struct tile **tile, struct entity *entity );
+
+	} entity;
 
 
 };
@@ -43,6 +56,9 @@ struct entity
 {
 	int x;
 	int y;
+
+	int hp;
+	int dmg;
 
 	struct tile* tile;
 
