@@ -13,8 +13,24 @@
 struct tile player;
 struct tile **pptr;
 
+//Sets camera up to follow object
+//Camera is limited to map bounds
+void camfollow( int *cx, int *cy, int x, int y, int w, int h, int mx, int my )
+{
+	//TODO enfancy this stuff
+	//if ( *cx > x - mx - w ) *cx = x - mx - w;
+	//if ( *cx < x + mx - w ) *cx = x + mx - w;  
+	*cx = x - w / 2;
+	*cy = y - h / 2;
+	
+	//Bounds
+	if ( *cx < 0 ) *cx = 0;
+	if ( *cy < 0 ) *cy = 0;
+	if ( *cx + w >= map.width ) *cx = map.width - 1 - w;
+	if ( *cy + h >= map.height ) *cy = map.height - 1 - h;
+}
+
 //Renders given portion of map on screen
-//TODO add offset
 void map_render( int x, int y, int w, int h, int offx, int offy )
 {
 	struct tile ** t;
@@ -42,8 +58,8 @@ void map_render( int x, int y, int w, int h, int offx, int offy )
 							al_map_rgb( 255, 255, 255 ), //No tint for now
 							0,
 							0,
-							offx + i * TILE_SIZE,
-							offy + j * TILE_SIZE,
+							offx + ( i - x ) * TILE_SIZE,
+							offy + ( j - y ) * TILE_SIZE,
 							1.0,
 							1.0,
 							0.0,
@@ -83,7 +99,7 @@ void kbdaction( ALLEGRO_EVENT ev )
 //Returns 0 when everything is ok and 1 when some error has occurred
 int gameloop( ALLEGRO_DISPLAY *win )
 {
-	int alive = 1, x = 0, y = 0;
+	int alive = 1;
 	const float fps = 2.f;
 	ALLEGRO_EVENT_QUEUE *queue = NULL;
 	ALLEGRO_TIMER *timer;
@@ -146,7 +162,10 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 		} while ( al_get_next_event( queue, &ev ) );
 		
-		map_render( x, y, 16, 16, 0, 0 );
+		//Center camera on player
+		int cx, cy;
+		camfollow( &cx, &cy, player.ent.x, player.ent.y, 20, 12, 3, 3 ); 
+		map_render( cx, cy, 20, 12, 0, 0 );
 		al_flip_display( );
 	}
 
@@ -171,7 +190,7 @@ int main( )
 	al_init_ttf_addon( );
 	
 	//TEMP test init
-	map_init( 16, 16, 16 );
+	map_init( 32, 32, 16 );
 	tiles_init( "./resources/tiles" );
 	
 	//TEMP player init
@@ -187,7 +206,7 @@ int main( )
 	
 
 	//TODO error checks
-	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
+	win = al_create_display( 20 * TILE_SIZE, 12 * TILE_SIZE + 64 );
 	al_set_window_title( win, "blemshoga - dev build from " __DATE__ " " __TIME__ );
 
 	int i, j;
@@ -199,12 +218,9 @@ int main( )
 	//TEMP
 	//Some horizontal wall
 	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, map.height / 2, tile( "stone wall" ) );
-	
-	
+		mapputtile( i, 8, tile( "stone wall" ) );	
 	//Doors
-	*maptile( map.width / 2 , map.height / 2, 0 ) = tile( "stone floor" );;
-	*maptile( map.width / 2 , map.height / 2, 1 ) = tile( "door (open)" );
+	*maptile( 8 , 8, 1 ) = tile( "door (open)" );
 	*maptile( 2, 2, 1 ) = tile( "door (open)" );
 
 
