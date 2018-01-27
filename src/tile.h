@@ -11,63 +11,41 @@
 #define TILE_ITEM   2
 #define TILE_ENTITY 3
 
+//Interaction types
+#define INT_PUSH 1
+#define INT_LEAVE 2
+
 struct tile
 {
 	//Common specification
-	struct
-	{
-		unsigned int id;
-		unsigned int type;
-		const char *name;
-		const char *spritename;
-		ALLEGRO_BITMAP *sprite;
-	} common;
+	unsigned int id;
+	unsigned int type;
+	const char *name;
+	const char *spritename;
+	ALLEGRO_BITMAP *sprite;
+		
+	//Interaction handler
+	void ( *action )( struct tile **self, struct tile **other, int itype );
 
 	//Block specification
-	struct
-	{
-		//Flags
-		unsigned int ground : 1; //Is this tile a ground tile?
-		unsigned int solid : 1; //Can entities walk through this tile?
-		unsigned int flammable : 1; //Can this tile be set on fire?
-		unsigned int : 0;
-
-		//Interaction callbacks
-		void ( *entityinteraction )( struct tile **tile, int );
-
-	} block;
+	unsigned int ground : 1; //Is this tile a ground tile?
+	unsigned int solid : 1; //Can entities walk through this tile?
+	unsigned int flammable : 1; //Can this tile be set on fire?
+	unsigned int entity : 1; //Is this tile a living thing?
+	unsigned int : 0;
 
 	struct
 	{
-		int hp;
-		int dmg;
-
-		struct entity *entity;
-
-		//Interaction callbacks
-		void ( *entityinteraction )( struct tile **tile, struct entity *entity );
-
-	} entity;
-
-
+		int x, y, z;
+	} ent;
 };
 
-struct entity
-{
-	int x;
-	int y;
-
-	int hp;
-	int dmg;
-
-	struct tile* tile;
-
-};
 
 
 extern struct tile blocks[];
 extern struct tile entities[];
 extern int tiles_init( );
 extern int tiles_destroy( );
+extern struct tile *tile_byname( const char *name );
 
 #endif

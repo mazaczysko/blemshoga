@@ -30,7 +30,7 @@ struct tile** maptoptile( int x, int y )
 	for ( i = map.depth - 1; i >= 0; i-- )
 	{
 		t = maptile( x, y, i );
-		if ( t != NULL && *t != NULL && ( *t )->common.type != TILE_VOID )
+		if ( t != NULL && *t != NULL && ( *t )->type != TILE_VOID )
 		 	return t;
 	}
 
@@ -46,7 +46,7 @@ struct tile** mapfreetile( int x, int y )
 	for ( i = 0; i < map.depth; i++ )
 	{
 		t = maptile( x, y, i );
-		if ( t == NULL || *t == NULL || ( *t )->common.type == TILE_VOID )
+		if ( t == NULL || *t == NULL || ( *t )->type == TILE_VOID )
 		 	return t;
 	}
 
@@ -85,6 +85,7 @@ struct tile** mapmovetile( struct tile** tile, int x, int y )
 	return NULL;
 }
 
+//I don't want to know the reason for inverted logics in this function....
 int mapissolid( int x, int y )
 {
 	struct tile **t;
@@ -95,39 +96,17 @@ int mapissolid( int x, int y )
 		t = maptile( x, y, i );
 
 		if( t != NULL && *t != NULL && *t != TILE_VOID)
-			if( (*t)->block.solid == 1 )
-				return 0;
+			if( (*t)->solid == 1 )
+				return 1;
 
 	}
-
-return 1;
-}
-
-int entitypass( int x, int y, int whence, struct entity *entity )
-{
-	struct tile **t;
-	int i;
-
-	if( x >= map.width || y >= map.height || x < 0 || y < 0 )
-		return 1;
-
-	for( i = 0; i < map.depth; i++ )
-	{
-		t = maptile( x, y, i );
-
-		if( t != NULL && *t != NULL && *t != TILE_VOID && (*t)->block.entityinteraction != NULL )
-			(*t)->block.entityinteraction( t, whence );
-
-		if( entity != NULL && t != NULL && *t != NULL && *t != TILE_VOID && (*t)->entity.entityinteraction != NULL )
-			(*t)->entity.entityinteraction( t, entity );
-	}
-
-	if( !mapissolid( x, y ) )
-		return 1;
 
 	return 0;
 }
 
+
+//TODO proper level generator in separate module
+/*
 int rangedrandom( int min, int max )
 {
 	return rand( ) % ( max + 1 - min ) + min;
@@ -191,5 +170,6 @@ int mapmakeroom( int x, int y, int maxwidth, int maxheight, int dir )
 		}
 	}
 
-return 0;
+	return 0;
 }
+*/

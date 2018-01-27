@@ -2,11 +2,15 @@
 #include <inttypes.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include "map.h"
 #include "tile.h"
+#include "ent.h"
 
-struct entity player;
-struct entity rats[10];
+//TODO replace this with proper solution
+struct tile player;
+struct tile **pptr;
 
 //Renders given portion of map on screen
 //TODO add offset
@@ -23,9 +27,9 @@ void map_render( int x, int y, int w, int h )
 			for ( k = 0; k < map.depth; k++ )
 			{
 				t = maptile( i, j, k );
-				if (  t != NULL && *t != NULL && ( *t )->common.type !=  TILE_VOID )
+				if ( t != NULL && *t != NULL && ( *t )->type !=  TILE_VOID )
 				{
-					sprite = ( *t )->common.sprite;
+					sprite = ( *t )->sprite;
 					if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
 				}
 			}
@@ -33,42 +37,24 @@ void map_render( int x, int y, int w, int h )
 	}
 }
 
-
-void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
+void kbdaction( ALLEGRO_EVENT ev )
 {
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
-		if ( !entitypass( entity->x, entity->y + 1, 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y + 1 ) != NULL )
-		{
-			entitypass( entity->x, entity->y, 0, NULL );
-			entity->y++;
-		}
+			entmove( &pptr, 0, 1 );
 			break;
 
 		case ALLEGRO_KEY_RIGHT:
-			if ( !entitypass( entity->x + 1, entity->y, 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x + 1, entity->y ) != NULL )
-			{
-				entitypass( entity->x, entity->y, 0, NULL );
-				entity->x++;
-			}
-				break;
-
+			entmove( &pptr, 1, 0 );
+			break;
 
 		case ALLEGRO_KEY_LEFT:
-			if ( !entitypass( entity->x - 1, entity->y , 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x - 1, entity->y ) != NULL )
-			{
-				entitypass( entity->x, entity->y, 0, NULL );
-				entity->x--;
-			}
+			entmove( &pptr, -1, 0 );
 			break;
 
 		case ALLEGRO_KEY_UP:
-			if ( !entitypass( entity->x, entity->y - 1 , 1, entity ) && mapmovetile( maptoptile( entity->x, entity->y ), entity->x, entity->y - 1  ) != NULL )
-			{
-				entitypass( entity->x, entity->y, 0, NULL );
-				entity->y--;
-			}
+			entmove( &pptr, 0, -1 );
 			break;
 
 		default:
@@ -76,13 +62,16 @@ void entitymove( ALLEGRO_EVENT ev, struct entity *entity )
 	}
 }
 
+//Wanna run into problems?
+//Because that's how you run into problems.
+/*
 void spawn( int x, int y, struct entity *entity )
 {
 	struct tile **t = mapfreetile( x, y );
 	*t = entity->tile;
 	(*t)->entity.entity = entity;
-
 }
+*/
 
 //Returns 0 when everything is ok and 1 when some error has occurred
 int gameloop( ALLEGRO_DISPLAY *win )
@@ -107,6 +96,10 @@ int gameloop( ALLEGRO_DISPLAY *win )
 	al_register_event_source( queue, al_get_display_event_source( win ) );
 	al_register_event_source( queue, al_get_keyboard_event_source( ) );
 
+	//TEMP load font
+	ALLEGRO_FONT *font = al_load_font( "./resources/fonts/monospace.ttf", 12, 0 );
+	assert( font != NULL );
+
 	while ( alive )
 	{
 		//Handle events
@@ -121,7 +114,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
-					entitymove( ev, &player );
+					kbdaction( ev );
 					break;
 
 				//Key up event
@@ -134,11 +127,14 @@ int gameloop( ALLEGRO_DISPLAY *win )
 			}
 
 		}
-
+		
 		//TODO all the rendering here
 		//TEMP test render
 		map_render( x, y, 16, 16 );
 
+		//TEMP debug text
+		al_draw_textf( font, al_map_rgba_f(1, 1, 1, 1), 0, 0, 0, "px: %d, py: %d", player.ent.x, player.ent.y );
+	
 		//Buffer flush
 		al_flip_display( );
 	}
@@ -159,46 +155,39 @@ int main( )
 	al_init( );
 	al_install_keyboard( );
 	al_init_image_addon( );
-
+	al_init_font_addon( );
+	al_init_ttf_addon( );
+	
 	//TEMP test init
 	map_init( 16, 16, 16 );
 	tiles_init( );
-	player.x = map.width / 2;
-	player.y = map.height / 2 + 2 ;
-	player.tile = entities;
-	player.dmg = 15;
-	rats[0].x = 10;
-	rats[0].y = 7;
-	rats[0].hp = entities[1].entity.hp;
-	rats[0].tile = entities + 1;
+	
+	//TEMP player init
+	player.ent.x = 0;
+	player.ent.y = 0;
+	player.type = TILE_ENTITY;
+	player.name = "player";
+	player.spritename = "./resources/entities/player.png";
+	player.solid = 1;
+	player.entity = 1;
+	player.sprite = al_load_bitmap( player.spritename );
+	pptr = mapputtile( player.ent.x, player.ent.y, &player );
+	
 
 	//TODO error checks
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
-	al_set_window_title( win, "blemshoga - development build from " __DATE__ " " __TIME__ );
+	al_set_window_title( win, "blemshoga - dev build from " __DATE__ " " __TIME__ );
 
-	//TEMP test
-	// mapputtile( 0, 0, blocks + 1 );
-	// for( int i = 1; i < map.width; i++ )
-	// 	mapputtile( i, 0, blocks + 0 );
-    //
-	 for( int i = 0; i < map.width; i++ )
-	 	mapputtile( i, map.height / 2, blocks + 1 );
-    //
-	// for( int i = 3; i < map.height; i++ )
-	// 	mapputtile( map.width/2 - 1, i, blocks + 1 );
 
-	mapmakeroom( 0 , 0, 5, 5, 1 );	//South
-	mapmakeroom( 0 , map.height , 6, 6, 0 );	//North
-	mapmakeroom( map.width - 5, map.height - 5, 5, 5, 3 );	//East
-	mapmakeroom( map.width , 0, 6, 6, 2 );	//West
-
+	//TEMP
+	//Some horizontal wall
+	for( int i = 0; i < map.width; i++ )
+		mapputtile( i, map.height / 2, blocks + 1 );
+	//Doors
 	*maptile( map.width / 2 , map.height / 2, 0 ) = blocks;
 	*maptile( map.width / 2 , map.height / 2, 1 ) = blocks + 2;
+	*maptile( 2, 2, 1 ) = blocks + 2;
 
-
-	mapputtile( player.x, player.y, player.tile );
-
-	spawn( rats[0].x, rats[0].y, rats );
 
 	//Enter main game loop
 	gameloop( win );
