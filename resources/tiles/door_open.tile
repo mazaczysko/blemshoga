@@ -1,0 +1,3 @@
+name door (open)
+sprite ./resources/blocks/door_open.png
+action door

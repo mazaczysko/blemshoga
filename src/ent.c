@@ -1,6 +1,10 @@
 #include "map.h"
 #include "tile.h"
+#include "ent.h"
 #include <assert.h>
+
+struct tile *entities;
+
 
 //Moves entity
 //Map contains pointer to the actual entity data

@@ -27,10 +27,27 @@ void map_render( int x, int y, int w, int h )
 			for ( k = 0; k < map.depth; k++ )
 			{
 				t = maptile( i, j, k );
-				if ( t != NULL && *t != NULL && ( *t )->type !=  TILE_VOID )
+				if ( t != NULL && *t != NULL )
 				{
 					sprite = ( *t )->sprite;
-					if ( sprite != NULL ) al_draw_bitmap( sprite, i * TILE_SIZE, j * TILE_SIZE, 0 );
+					if ( sprite != NULL )
+					{
+						al_draw_tinted_scaled_rotated_bitmap_region(
+							sprite,
+							0,
+							0,
+							TILE_SIZE,
+							TILE_SIZE,
+							al_map_rgb( 255, 255, 255 ), //No tint for now
+							0,
+							0,
+							i * TILE_SIZE,
+							j * TILE_SIZE,
+							1.0,
+							1.0,
+							0.0,
+							0 );
+					}
 				}
 			}
 		}
@@ -160,7 +177,7 @@ int main( )
 	
 	//TEMP test init
 	map_init( 16, 16, 16 );
-	tiles_init( );
+	tiles_init( "./resources/tiles" );
 	
 	//TEMP player init
 	player.ent.x = 0;
@@ -182,11 +199,14 @@ int main( )
 	//TEMP
 	//Some horizontal wall
 	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, map.height / 2, blocks + 1 );
+		mapputtile( i, map.height / 2, tilename( "stone wall" ) );
+	
+	assert( tilename( "stone wall" ) != NULL );
+	
 	//Doors
-	*maptile( map.width / 2 , map.height / 2, 0 ) = blocks;
-	*maptile( map.width / 2 , map.height / 2, 1 ) = blocks + 2;
-	*maptile( 2, 2, 1 ) = blocks + 2;
+	*maptile( map.width / 2 , map.height / 2, 0 ) = tilename( "stone floor" );;
+	*maptile( map.width / 2 , map.height / 2, 1 ) = tilename( "door (open)" );
+	*maptile( 2, 2, 1 ) = tilename( "door (open)" );
 
 
 	//Enter main game loop

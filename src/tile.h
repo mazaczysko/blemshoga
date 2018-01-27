@@ -6,7 +6,7 @@
 
 #define TILE_SIZE 32
 
-#define TILE_VOID   0
+#define TILE_UNDEF  0
 #define TILE_BLOCK  1
 #define TILE_ITEM   2
 #define TILE_ENTITY 3
@@ -19,20 +19,22 @@ struct tile
 {
 	//Common specification
 	unsigned int id;
-	unsigned int type;
-	const char *name;
-	const char *spritename;
+	int type;
+	char *name;
+	char *spritename;
 	ALLEGRO_BITMAP *sprite;
+	int animframe;
 		
 	//Interaction handler
 	void ( *action )( struct tile **self, struct tile **other, int itype );
+	char *actionname; 
 
-	//Block specification
+	//Flags
 	unsigned int ground : 1; //Is this tile a ground tile?
 	unsigned int solid : 1; //Can entities walk through this tile?
 	unsigned int flammable : 1; //Can this tile be set on fire?
 	unsigned int entity : 1; //Is this tile a living thing?
-	unsigned int : 0;
+	int : 0;
 
 	struct
 	{
@@ -41,11 +43,8 @@ struct tile
 };
 
 
-
-extern struct tile blocks[];
-extern struct tile entities[];
 extern int tiles_init( );
 extern int tiles_destroy( );
-extern struct tile *tile_byname( const char *name );
+extern struct tile *tilename( const char *name );
 
 #endif

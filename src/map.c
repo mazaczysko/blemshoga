@@ -30,7 +30,7 @@ struct tile** maptoptile( int x, int y )
 	for ( i = map.depth - 1; i >= 0; i-- )
 	{
 		t = maptile( x, y, i );
-		if ( t != NULL && *t != NULL && ( *t )->type != TILE_VOID )
+		if ( t != NULL && *t != NULL )
 		 	return t;
 	}
 
@@ -46,7 +46,7 @@ struct tile** mapfreetile( int x, int y )
 	for ( i = 0; i < map.depth; i++ )
 	{
 		t = maptile( x, y, i );
-		if ( t == NULL || *t == NULL || ( *t )->type == TILE_VOID )
+		if ( t == NULL || *t == NULL )
 		 	return t;
 	}
 
@@ -95,7 +95,7 @@ int mapissolid( int x, int y )
 	{
 		t = maptile( x, y, i );
 
-		if( t != NULL && *t != NULL && *t != TILE_VOID)
+		if( t != NULL && *t != NULL )
 			if( (*t)->solid == 1 )
 				return 1;
 
