@@ -3,10 +3,10 @@
 
 static void act_door( struct tile **self, struct tile **other, int itype )
 {
-	if ( itype == INT_PUSH )
-		*self = tilename( "door (open)" );
-	else if ( itype == INT_LEAVE )
-		*self = tilename( "door (closed)" );
+	if ( itype == ACT_PUSH )
+		*self = tile( "door (open)" );
+	else if ( itype == ACT_LEAVE )
+		*self = tile( "door (closed)" );
 }
 
 static struct
@@ -23,6 +23,8 @@ static struct
 void ( *acthandler( const char *name ) )( struct tile **self, struct tile **other, int itype )
 {
 	int i;
+	if ( name == NULL ) return NULL;
+	
 	for ( i = 0; i < HANDLER_CNT; i++ )
 	{
 		if ( !strcmp( handlers[i].name, name ) )

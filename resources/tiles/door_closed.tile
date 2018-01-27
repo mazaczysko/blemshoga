@@ -1,4 +1,4 @@
 solid
 name door (closed)
-sprite ./resources/blocks/door_closed.png
+sprite ./resources/tiles/door_closed.png
 action door

@@ -1,4 +1,4 @@
 solid
 name stone wall
-sprite ./resources/blocks/wall_stone.png
+sprite ./resources/tiles/wall_stone.png
 

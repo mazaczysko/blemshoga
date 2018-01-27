@@ -4,16 +4,14 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 
+//Tile size in pixels
 #define TILE_SIZE 32
 
+//Tile types
 #define TILE_UNDEF  0
 #define TILE_BLOCK  1
 #define TILE_ITEM   2
 #define TILE_ENTITY 3
-
-//Interaction types
-#define INT_PUSH 1
-#define INT_LEAVE 2
 
 struct tile
 {
@@ -34,7 +32,7 @@ struct tile
 	unsigned int solid : 1; //Can entities walk through this tile?
 	unsigned int flammable : 1; //Can this tile be set on fire?
 	unsigned int entity : 1; //Is this tile a living thing?
-	int : 0;
+	unsigned int : 0;
 
 	struct
 	{
@@ -44,7 +42,7 @@ struct tile
 
 
 extern int tiles_init( );
-extern int tiles_destroy( );
-extern struct tile *tilename( const char *name );
+extern void tiles_destroy( );
+extern struct tile *tile( const char *name );
 
 #endif

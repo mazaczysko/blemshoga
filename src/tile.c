@@ -8,19 +8,10 @@
 #include "tileaction.h"
 #include "tile.h"
 
-//TODO load from json (possibly use Lua)
 static struct tile *tiles = NULL;
 static int tilecnt = 0;
-	/*
-	{ 0, TILE_BLOCK, "stone floor", "./resources/blocks/floor_stone.png", NULL, 0, NULL, 1, 0, 0 },
-	{ 1, TILE_BLOCK, "stone wall", "./resources/blocks/wall_stone.png", NULL, 0, NULL, 0, 1, 0 },
-	{ 2, TILE_BLOCK, "door (closed)", "./resources/blocks/door_closed.png", NULL, 0, NULL, 0, 1, 0 },
-	{ 3, TILE_BLOCK, "door (open)", "./resources/blocks/door_opened.png", NULL, 0, NULL, 0, 0, 0 },
-	{ 4, TILE_BLOCK, "dead", "./resources/blocks/dead.png", NULL, 0, NULL, 1, 0, 0 },
-	*/
 
-
-struct tile *tilename( const char *name )
+struct tile *tile( const char *name )
 {
 	for ( int i = 0; i < tilecnt; i++ )
 	{
@@ -30,13 +21,12 @@ struct tile *tilename( const char *name )
 	return NULL;
 }
 
-//TODO error handling
 static int loadtile( const char *path )
 {
 	char buf[4096];
 	char *key, *val;
 	int i, len;
-	struct tile newtile;
+	struct tile newtile, *tilearr;
 	memset( &newtile, 0, sizeof( newtile ) );
 	
 	//Open tile file
@@ -79,20 +69,22 @@ static int loadtile( const char *path )
 	
 	fclose( f );
 	
+	//Proper ID
 	newtile.id = tilecnt;
 	
-	//TEMP
-	assert( newtile.spritename != NULL );
-	assert( newtile.name != NULL );
+	//Load things based on read data
+	if ( newtile.spritename == NULL ) return 1;
+	if ( newtile.name == NULL ) return 1;
 	newtile.sprite = al_load_bitmap( newtile.spritename );
-	assert( newtile.sprite != NULL );
+	newtile.action = acthandler( newtile.actionname );
+	if ( newtile.sprite == NULL ) return 1;
 	
-	if ( newtile.actionname != NULL ) newtile.action = acthandler( newtile.actionname );
-	
-		
+	//Reallocate tile array	
+	tilearr = realloc( tiles, ( tilecnt + 1 ) * sizeof( struct tile ) );
+	if ( tilearr == NULL ) return 1;
 	
 	//Save new tile
-	tiles = realloc( tiles, ( tilecnt + 1 ) * sizeof( struct tile ) );
+	tiles = tilearr;
 	tiles[tilecnt] = newtile;
 	tilecnt++;
 	return 0;
@@ -109,24 +101,27 @@ int tiles_init( const char *path )
 	assert( d != NULL );
 	
 	while ( ( ent = readdir( d ) ) != NULL )
-	{
+	{	
 		//Accept only *.tile files
 		ext = strrchr( ent->d_name, '.' );
 		if ( ext == NULL ) continue;
 		if ( strcmp( ext + 1, "tile" ) ) continue;
-		snprintf( filename, PATH_MAX, "%s/%s", path, ent->d_name );
-		loadtile( filename );
+		
+		assert( snprintf( filename, PATH_MAX, "%s/%s", path, ent->d_name ) != 0 );
+		if ( loadtile( filename ) )
+		{
+			fprintf( stderr, "tile loading failed - '%s' skipped!\n", ent->d_name );
+		}
 	}
 
 	closedir( d );
 	return 0;
 }
 
-int tiles_destroy( )
+void tiles_destroy( )
 {
 	unsigned int i;
 
-	//TODO error checking
 	for( i = 0; i < tilecnt; i++ )
 	{
 		al_destroy_bitmap( tiles[i].sprite );
@@ -134,5 +129,5 @@ int tiles_destroy( )
 		free( tiles[i].spritename );
 	}
 
-	return 0;
+	free( tiles );
 }

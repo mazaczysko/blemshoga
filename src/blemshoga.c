@@ -7,6 +7,7 @@
 #include "map.h"
 #include "tile.h"
 #include "ent.h"
+#include "blemshoga.h"
 
 //TODO replace this with proper solution
 struct tile player;
@@ -14,7 +15,7 @@ struct tile **pptr;
 
 //Renders given portion of map on screen
 //TODO add offset
-void map_render( int x, int y, int w, int h )
+void map_render( int x, int y, int w, int h, int offx, int offy )
 {
 	struct tile ** t;
 	int i, j, k;
@@ -34,15 +35,15 @@ void map_render( int x, int y, int w, int h )
 					{
 						al_draw_tinted_scaled_rotated_bitmap_region(
 							sprite,
+							( *t )->animframe * TILE_SIZE,
 							0,
-							0,
-							TILE_SIZE,
+							( *t )->animframe * TILE_SIZE + TILE_SIZE,
 							TILE_SIZE,
 							al_map_rgb( 255, 255, 255 ), //No tint for now
 							0,
 							0,
-							i * TILE_SIZE,
-							j * TILE_SIZE,
+							offx + i * TILE_SIZE,
+							offy + j * TILE_SIZE,
 							1.0,
 							1.0,
 							0.0,
@@ -79,25 +80,23 @@ void kbdaction( ALLEGRO_EVENT ev )
 	}
 }
 
-//Wanna run into problems?
-//Because that's how you run into problems.
-/*
-void spawn( int x, int y, struct entity *entity )
-{
-	struct tile **t = mapfreetile( x, y );
-	*t = entity->tile;
-	(*t)->entity.entity = entity;
-}
-*/
-
 //Returns 0 when everything is ok and 1 when some error has occurred
 int gameloop( ALLEGRO_DISPLAY *win )
 {
 	int alive = 1, x = 0, y = 0;
+	const float fps = 2.f;
 	ALLEGRO_EVENT_QUEUE *queue = NULL;
+	ALLEGRO_TIMER *timer;
 	ALLEGRO_EVENT ev;
 
 	if ( win == NULL )
+	{
+		//TODO error handler
+		return 1;
+	}
+
+	timer = al_create_timer( 1.0 / fps );
+	if ( timer == NULL ) 
 	{
 		//TODO error handler
 		return 1;
@@ -112,15 +111,16 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 	al_register_event_source( queue, al_get_display_event_source( win ) );
 	al_register_event_source( queue, al_get_keyboard_event_source( ) );
-
-	//TEMP load font
-	ALLEGRO_FONT *font = al_load_font( "./resources/fonts/monospace.ttf", 12, 0 );
-	assert( font != NULL );
-
+	al_register_event_source( queue, al_get_timer_event_source( timer ) );
+	al_start_timer( timer );
+	
 	while ( alive )
 	{
+		//Wait for event
+		al_wait_for_event( queue, &ev );
+		
 		//Handle events
-		while ( al_get_next_event( queue, &ev ) )
+		do
 		{
 			switch ( ev.type )
 			{
@@ -142,21 +142,16 @@ int gameloop( ALLEGRO_DISPLAY *win )
 				default:
 					break;
 			}
+			
 
-		}
+		} while ( al_get_next_event( queue, &ev ) );
 		
-		//TODO all the rendering here
-		//TEMP test render
-		map_render( x, y, 16, 16 );
-
-		//TEMP debug text
-		al_draw_textf( font, al_map_rgba_f(1, 1, 1, 1), 0, 0, 0, "px: %d, py: %d", player.ent.x, player.ent.y );
-	
-		//Buffer flush
+		map_render( x, y, 16, 16, 0, 0 );
 		al_flip_display( );
 	}
 
 	al_destroy_event_queue( queue );
+	al_destroy_timer( timer );
 
 	return 0;
 }
@@ -195,18 +190,22 @@ int main( )
 	win = al_create_display( map.width * TILE_SIZE, map.height * TILE_SIZE );
 	al_set_window_title( win, "blemshoga - dev build from " __DATE__ " " __TIME__ );
 
+	int i, j;
+	for ( i = 0; i < map.width; i++ )
+		for ( j = 0; j < map.height; j++ )
+			mapputtile( i, j, tile( "stone floor" ) );
+
 
 	//TEMP
 	//Some horizontal wall
 	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, map.height / 2, tilename( "stone wall" ) );
+		mapputtile( i, map.height / 2, tile( "stone wall" ) );
 	
-	assert( tilename( "stone wall" ) != NULL );
 	
 	//Doors
-	*maptile( map.width / 2 , map.height / 2, 0 ) = tilename( "stone floor" );;
-	*maptile( map.width / 2 , map.height / 2, 1 ) = tilename( "door (open)" );
-	*maptile( 2, 2, 1 ) = tilename( "door (open)" );
+	*maptile( map.width / 2 , map.height / 2, 0 ) = tile( "stone floor" );;
+	*maptile( map.width / 2 , map.height / 2, 1 ) = tile( "door (open)" );
+	*maptile( 2, 2, 1 ) = tile( "door (open)" );
 
 
 	//Enter main game loop
