@@ -1,3 +1,4 @@
 name door (open)
-sprite ./resources/tiles/door_open.png
+sprite ./resources/tiles/door.png
 action door
+animframe 1

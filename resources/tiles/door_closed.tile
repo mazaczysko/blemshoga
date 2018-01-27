@@ -1,4 +1,5 @@
 solid
 name door (closed)
-sprite ./resources/tiles/door_closed.png
+sprite ./resources/tiles/door.png
 action door
+animframe 0
