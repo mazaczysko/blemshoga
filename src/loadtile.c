@@ -34,13 +34,9 @@ static int loadsnd( FILE *f, struct tile *t, int cnt )
 		path = strchr( buf, ' ' );
 		if ( path != NULL ) *path++ = 0;
 
-		assert( al_filename_exists( path ) );
-		printf( "path: '%s'\n", path );
-		printf( "name: '%s'\n", name );
 		t->snd[i].sound = al_load_sample( path );
-		assert( t->snd[i].sound != NULL );
 		t->snd[i].name = strdup( name );
-		assert( t->snd[i].name != NULL );
+		if ( t->snd[i].sound == NULL || t->snd[i].name == NULL ) fprintf( stderr, "cannot load '%s'\n", path );		
 
 		i++;
 	}
