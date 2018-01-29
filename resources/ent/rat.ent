@@ -4,3 +4,5 @@ name rat
 sprite resources/ent/rat.png
 ai rat
 entity
+--snd 1
+miau resources/sounds/miau.wav

@@ -35,7 +35,7 @@ struct tile
 	unsigned int : 0;
 
 	//Sounds
-	struct tilesnd snd;
+	struct tilesnd *snd;
 	int sndcnt;
 
 	struct
@@ -53,5 +53,6 @@ struct tile
 extern int tiles_init( );
 extern void tiles_destroy( );
 extern struct tile *tile( const char *name );
+extern struct tilesnd *tilesnd( struct tile *t, const char *name );
 
 #endif

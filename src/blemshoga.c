@@ -4,6 +4,8 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include "map.h"
 #include "tile.h"
 #include "ent.h"
@@ -190,6 +192,10 @@ int main( )
 	al_init_font_addon( );
 	al_init_ttf_addon( );
 
+	assert( al_install_audio( ) );
+	assert( al_init_acodec_addon( ) );
+	assert( al_reserve_samples( 16 ) );
+
 	//TEMP test init
 	map_init( 32, 32, 16 );
 	tiles_init( "./resources/tiles" );
@@ -203,7 +209,6 @@ int main( )
 	player.solid = 1;
 	player.entity = 1;
 	player.sprite = al_load_bitmap( player.spritename );
-
 
 
 

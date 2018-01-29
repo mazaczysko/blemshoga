@@ -4,9 +4,43 @@
 #include <stdio.h>
 #include <dirent.h>
 
-//
-static int loadsnd( FILE *f, struct tile *t )
+static int loadsnd( FILE *f, struct tile *t, int cnt )
 {
+	char buf[1024];
+	char *name, *path;
+	int len, j, i = 0;
+
+	t->snd = calloc( cnt, sizeof( struct tilesnd ) );
+	t->sndcnt = cnt;
+
+	while ( fgets( buf, 1024, f ) != NULL && i < cnt )
+	{
+		//Trim buffer
+		len = strlen( buf );
+		for ( j = 0; j < len; j++ )
+		{
+			if ( strchr( "\n\r", buf[j] ) != NULL )
+			{
+				buf[j] = 0;
+				break;
+			}
+		}
+
+		//Divide into key and value pairs
+		name = buf;
+		path = strchr( buf, ' ' );
+		if ( path != NULL ) *path++ = 0;
+
+		assert( al_filename_exists( path ) );
+		printf( "path: '%s'\n", path );
+		printf( "name: '%s'\n", name );
+		t->snd[i].sound = al_load_sample( path );
+		assert( t->snd[i].sound != NULL );
+		t->snd[i].name = strdup( name );
+		assert( t->snd[i].name != NULL );
+
+		i++;
+	}
 	return 0;
 }
 
@@ -43,8 +77,8 @@ int loadtile( const char *path, struct tile *t )
 		val = strchr( buf, ' ' );
 		if ( val != NULL ) *val++ = 0;
 
-
-		if ( !strcmp( key, "--snd" ) ) loadsnd( f, t );
+		//Load sounds
+		if ( !strcmp( key, "--snd" ) ) loadsnd( f, t, atoi( val ) );
 
 		//Keys that don't need values
 		if ( !strcmp( key, "ground" ) ) t->ground = 1;
