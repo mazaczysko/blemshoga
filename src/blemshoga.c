@@ -198,7 +198,6 @@ int main( )
 	//TEMP player init
 	player.ent.x = 0;
 	player.ent.y = 0;
-	player.type = TILE_ENTITY;
 	player.name = "player";
 	player.spritename = "./resources/ent/player.png";
 	player.solid = 1;

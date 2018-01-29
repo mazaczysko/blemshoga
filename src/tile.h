@@ -3,21 +3,21 @@
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
 
 //Tile size in pixels
 #define TILE_SIZE 32
 
-//Tile types
-#define TILE_UNDEF  0
-#define TILE_BLOCK  1
-#define TILE_ITEM   2
-#define TILE_ENTITY 3
+struct tilesnd
+{
+	ALLEGRO_SAMPLE *sound;
+	char *name;
+};
 
 struct tile
 {
 	//Common specification
 	unsigned int id;
-	int type;
 	char *name;
 	char *spritename;
 	ALLEGRO_BITMAP *sprite;
@@ -33,6 +33,10 @@ struct tile
 	unsigned int flammable : 1; //Can this tile be set on fire?
 	unsigned int entity : 1; //Is this tile a living thing?
 	unsigned int : 0;
+
+	//Sounds
+	struct tilesnd snd;
+	int sndcnt;
 
 	struct
 	{

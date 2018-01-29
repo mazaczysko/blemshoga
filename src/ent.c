@@ -3,6 +3,7 @@
 #include "ent.h"
 #include "tileaction.h"
 #include "ai.h"
+#include "loadtile.h"
 #include <assert.h>
 #include <stdio.h>
 #include <dirent.h>
@@ -92,100 +93,37 @@ void spawn( const char *name, int x, int y )
 	entcnt++;
 }
 
-//Load entity from file
-static int loadent( const char *path )
-{
-	char buf[4096];
-	char *key, *val;
-	int i, len;
-	struct tile newtemp, *temparr;
-	memset( &newtemp, 0, sizeof( newtemp ) );
-
-	//Open tile file
-	FILE *f = fopen( path, "rt" );
-	if ( f == NULL ) return 1;
-
-	while ( fgets( buf, 4096, f ) != NULL )
-	{
-		//Trim buffer
-		len = strlen( buf );
-		for ( i = 0; i < len; i++ )
-		{
-			if ( strchr( "\n\r", buf[i] ) != NULL )
-			{
-				buf[i] = 0;
-				break;
-			}
-		}
-
-		//Divide into key and value pairs
-		key = buf;
-		val = strchr( buf, ' ' );
-		if ( val != NULL ) *val++ = 0;
-
-		//Keys that don't need values
-		if ( !strcmp( key, "solid" ) ) newtemp.solid = 1;
-		if ( !strcmp( key, "flammable" ) ) newtemp.flammable = 1;
-
-		//Keys that need values
-		if ( val == NULL ) continue;
-		if ( !strcmp( key, "name" ) ) newtemp.name = strdup( val );
-		if ( !strcmp( key, "sprite" ) ) newtemp.spritename = strdup( val );
-		if ( !strcmp( key, "ai" ) ) newtemp.ent.ainame = strdup( val );
-		if ( !strcmp( key, "hp" ) ) sscanf( val, "%d", &newtemp.ent.maxhp );
-	}
-
-	fclose( f );
-
-	//Proper ID
-	newtemp.id = enttcnt;
-
-	//Default settings
-	newtemp.ent.hp = newtemp.ent.maxhp;
-	newtemp.entity = 1;
-	newtemp.animframe = 0;
-	newtemp.type = TILE_ENTITY;
-
-	//Load things based on read data
-	if ( newtemp.spritename == NULL ) return 1;
-	if ( newtemp.name == NULL ) return 1;
-	assert( ( newtemp.sprite = al_load_bitmap( newtemp.spritename ) ) != NULL );
-	if ( newtemp.sprite == NULL ) return 1;
-	newtemp.ent.ai = aihandler( newtemp.ent.ainame );
-
-	//Reallocate tile array
-	temparr = realloc( entt, ( enttcnt + 1 ) * sizeof( struct tile ) );
-	if ( temparr == NULL ) return 1;
-
-	//Save new entity template
-	entt = temparr;
-	entt[enttcnt] = newtemp;
-	enttcnt++;
-	return 0;
-}
-
 //Loads entity files from directory
+//DO NOT CALL DURING THE GAME (realloc)
 int ent_init( const char *path )
 {
 	char filename[PATH_MAX];
 	const char *ext;
+	struct tile t, *entarr;
 
 	DIR *d = opendir( path );
-	struct dirent *ent;
+	struct dirent *dent;
 
 	assert( d != NULL );
 
-	while ( ( ent = readdir( d ) ) != NULL )
+	while ( ( dent = readdir( d ) ) != NULL )
 	{
 		//Accept only *.ent files
-		ext = strrchr( ent->d_name, '.' );
+		ext = strrchr( dent->d_name, '.' );
 		if ( ext == NULL ) continue;
 		if ( strcmp( ext + 1, "ent" ) ) continue;
 
-		assert( snprintf( filename, PATH_MAX, "%s/%s", path, ent->d_name ) != 0 );
-		if ( loadent( filename ) )
+		assert( snprintf( filename, PATH_MAX, "%s/%s", path, dent->d_name ) != 0 );
+		if ( !loadtile( filename, &t ) )
 		{
-			fprintf( stderr, "entity loading failed - '%s' skipped!\n", ent->d_name );
+			entarr = realloc( entt, ( enttcnt + 1 ) * sizeof( struct tile ) );
+			assert( entarr != NULL );
+			entt = entarr;
+			entt[enttcnt++] = t;
+		}
+		else
+		{
+			fprintf( stderr, "entity loading failed - '%s' skipped!\n", dent->d_name );
 		}
 	}
 
