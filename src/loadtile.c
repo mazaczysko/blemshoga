@@ -15,6 +15,9 @@ static int loadsnd( FILE *f, struct tile *t, int cnt )
 
 	while ( fgets( buf, 1024, f ) != NULL && i < cnt )
 	{
+		//Skip comments
+		if ( buf[0] == ';' ) continue;
+
 		//Trim buffer
 		len = strlen( buf );
 		for ( j = 0; j < len; j++ )
