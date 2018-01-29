@@ -19,10 +19,10 @@ void camfollow( int *cx, int *cy, int x, int y, int w, int h, int mx, int my )
 {
 	//TODO enfancy this stuff
 	//if ( *cx > x - mx - w ) *cx = x - mx - w;
-	//if ( *cx < x + mx - w ) *cx = x + mx - w;  
+	//if ( *cx < x + mx - w ) *cx = x + mx - w;
 	*cx = x - w / 2;
 	*cy = y - h / 2;
-	
+
 	//Bounds
 	if ( *cx < 0 ) *cx = 0;
 	if ( *cy < 0 ) *cy = 0;
@@ -112,7 +112,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 	}
 
 	timer = al_create_timer( 1.0 / fps );
-	if ( timer == NULL ) 
+	if ( timer == NULL )
 	{
 		//TODO error handler
 		return 1;
@@ -129,12 +129,12 @@ int gameloop( ALLEGRO_DISPLAY *win )
 	al_register_event_source( queue, al_get_keyboard_event_source( ) );
 	al_register_event_source( queue, al_get_timer_event_source( timer ) );
 	al_start_timer( timer );
-	
+
 	while ( alive )
 	{
 		//Wait for event
 		al_wait_for_event( queue, &ev );
-		
+
 		//Handle events
 		do
 		{
@@ -152,19 +152,20 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key up event
 				case ALLEGRO_EVENT_KEY_UP:
+					entai( );
 					break;
 
 				//Ignore unregistered events
 				default:
 					break;
 			}
-			
+
 
 		} while ( al_get_next_event( queue, &ev ) );
-		
+
 		//Center camera on player
 		int cx, cy;
-		camfollow( &cx, &cy, player.ent.x, player.ent.y, 20, 12, 3, 3 ); 
+		camfollow( &cx, &cy, player.ent.x, player.ent.y, 20, 12, 3, 3 );
 		map_render( cx, cy, 20, 12, 0, 0 );
 		al_flip_display( );
 	}
@@ -188,22 +189,24 @@ int main( )
 	al_init_image_addon( );
 	al_init_font_addon( );
 	al_init_ttf_addon( );
-	
+
 	//TEMP test init
 	map_init( 32, 32, 16 );
 	tiles_init( "./resources/tiles" );
-	
+	ent_init( "./resources/ent" );
+
 	//TEMP player init
 	player.ent.x = 0;
 	player.ent.y = 0;
 	player.type = TILE_ENTITY;
 	player.name = "player";
-	player.spritename = "./resources/entities/player.png";
+	player.spritename = "./resources/ent/player.png";
 	player.solid = 1;
 	player.entity = 1;
 	player.sprite = al_load_bitmap( player.spritename );
-	pptr = mapputtile( player.ent.x, player.ent.y, &player );
-	
+
+
+
 
 	//TODO error checks
 	win = al_create_display( 20 * TILE_SIZE, 12 * TILE_SIZE + 64 );
@@ -214,11 +217,18 @@ int main( )
 		for ( j = 0; j < map.height; j++ )
 			mapputtile( i, j, tile( "stone floor" ) );
 
+	pptr = mapputtile( player.ent.x, player.ent.y, &player );
+	spawn( "rat", 7, 7 );
+	spawn( "rat", 6, 6 );
+	spawn( "rat", 4, 4 );
+	spawn( "rat", 3, 3 );
+	spawn( "rat", 10, 10 );
+
 
 	//TEMP
 	//Some horizontal wall
 	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, 8, tile( "stone wall" ) );	
+		mapputtile( i, 8, tile( "stone wall" ) );
 	//Doors
 	*maptile( 8 , 8, 1 ) = tile( "door (open)" );
 	*maptile( 2, 2, 1 ) = tile( "door (open)" );

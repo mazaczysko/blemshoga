@@ -46,7 +46,7 @@ struct tile** mapfreetile( int x, int y )
 	for ( i = 0; i < map.depth; i++ )
 	{
 		t = maptile( x, y, i );
-		if ( t == NULL || *t == NULL )
+		if ( t != NULL && *t == NULL )
 		 	return t;
 	}
 

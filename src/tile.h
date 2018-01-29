@@ -22,10 +22,10 @@ struct tile
 	char *spritename;
 	ALLEGRO_BITMAP *sprite;
 	int animframe;
-		
+
 	//Interaction handler
 	void ( *action )( struct tile **self, struct tile **other, int itype );
-	char *actionname; 
+	char *actionname;
 
 	//Flags
 	unsigned int ground : 1; //Is this tile a ground tile?
@@ -36,6 +36,11 @@ struct tile
 
 	struct
 	{
+		struct tile ***handle;
+		char *ainame;
+		void ( *ai )( struct tile ***ent );
+
+		int maxhp, hp;
 		int x, y, z;
 	} ent;
 };
