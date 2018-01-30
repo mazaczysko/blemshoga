@@ -140,6 +140,13 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	struct tile **t, **src, **dest, *e, **etile;
 	int i, sx, sy;
 
+	//Pointer summary:
+	//src - pointer to the place where entity used to be
+	//dest - pointer to where entity wants to go (or went)
+	//e - pointer to the actual entity data
+	//etile - pointer to the current entity tile
+	//eptr - pointer to some function's pointer to the entity on map - should be updated when etile is updated
+
 	//For debug, let's have some assertions instead
 	//Programmer should know that things aren't really fine if he attempts to move stone wall
 	assert( eptr != NULL );
@@ -153,7 +160,6 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	e = *etile;
 	if ( !e->entity ) return;
 
-
 	//dx, dy - destination xy
 	//sx, sy - source xy
 	sx = e->ent.x;
@@ -166,6 +172,8 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	//TODO call proper fight system function if destination is an entity
 
 	//Interact with all tiles ahead of entity
+	assert( etile != NULL );
+	assert( *etile != NULL );
 	for ( i = 0; i < map.depth; i++ )
 	{
 		t = maptile( dx,dy, i );
@@ -178,13 +186,19 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	if ( ( dest = mapfreetile( dx, dy ) ) == NULL ) return;
 	e->ent.x = dx;
 	e->ent.y = dy;
-	src = etile;
-	*dest = *etile;
-	*src = NULL;
+	src = etile;    //Source is current entity position
+	*dest = *etile; //Write proper entity pointer to destination (struct tile*)
+	*src = NULL;    //Leave source tile empty
+	
+	//Update all entity pointers after move
 	*eptr = dest;
-
+	etile = *eptr;
+	e = *etile;
+	
 	//Leave interaction
 	//Interact with all tiles ahead of entity
+	assert( etile != NULL );
+	assert( *etile != NULL );
 	for ( i = 0; i < map.depth; i++ )
 	{
 		t = maptile( sx, sy, i );
