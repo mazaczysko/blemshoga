@@ -104,6 +104,45 @@ int mapissolid( int x, int y )
 	return 0;
 }
 
+//'Takes' and returns pointer to the topmost itemlike tile
+struct tile* maptaketile( int x, int y )
+{
+	struct tile **t, *item;
+	int i;
+
+	for ( i = MAP_LENT - 1; i > MAP_LFLOOR; i-- )
+	{
+		printf("i=%d\n", i );
+		t = maptile( x, y, i );
+		if ( t != NULL && *t != NULL )
+		{
+			item = *t;
+			*t = NULL;
+
+		 	return item;
+		}
+	}
+
+	return  NULL;
+}
+
+//Put itemlike tile into first free layer
+int mapdroptile( int x, int y, struct tile* item )
+{
+	struct tile **t;
+	int i;
+
+	for ( i = MAP_LFLOOR + 1; i < MAP_LENT ; i++ )
+	{
+		t = maptile( x, y, i );
+		if ( t != NULL && *t == NULL )
+			*t = item;
+			return 0;
+	}
+
+	return 1;
+}
+
 
 //TODO proper level generator in separate module
 /*
