@@ -6,7 +6,7 @@ static void std_death( struct tile ***e )
 {
 	assert( e != NULL );
 	tilesnd( **e, "death" );
-	mapputtile( (**e)->ent.x, (**e)->ent.y, 5, tile( "blood" ) ); 
+	mapdroptile( (**e)->ent.x, (**e)->ent.y, tile( "blood" ) ); 
 	
 }
 
