@@ -13,7 +13,7 @@ static int loadsnd( FILE *f, struct tile *t, int cnt )
 	t->snd = calloc( cnt, sizeof( struct tilesnd ) );
 	t->sndcnt = cnt;
 
-	while ( fgets( buf, 1024, f ) != NULL && i < cnt )
+	while ( i < cnt && fgets( buf, 1024, f ) != NULL )
 	{
 		//Skip comments
 		if ( buf[0] == ';' ) continue;
@@ -43,6 +43,67 @@ static int loadsnd( FILE *f, struct tile *t, int cnt )
 	return 0;
 }
 
+//Load entity group
+//TO IMPROVE
+static int loadgrp( FILE *f, struct tile *t, int cnt )
+{
+	char buf[1024];
+	int len, j, i = 0;
+
+	while ( i < cnt && fgets( buf, 1024, f ) != NULL )
+	{
+		//Skip comments
+		if ( buf[0] == ';' ) continue;
+
+		//Trim buffer
+		len = strlen( buf );
+		for ( j = 0; j < len; j++ )
+		{
+			if ( strchr( "\n\r", buf[j] ) != NULL )
+			{
+				buf[j] = 0;
+				break;
+			}
+		}
+
+		t->ent.grp |= ( 1 << atoi( buf ) );
+
+		i++;
+	}
+	return 0;
+}
+
+//Load entity hotsile group
+//TO IMPROVE
+static int loadhosgrp( FILE *f, struct tile *t, int cnt )
+{
+	char buf[1024];
+	int len, j, i = 0;
+	
+	while ( i < cnt && fgets( buf, 1024, f ) != NULL )
+	{
+		//Skip comments
+		if ( buf[0] == ';' ) continue;
+
+		//Trim buffer
+		len = strlen( buf );
+		for ( j = 0; j < len; j++ )
+		{
+			if ( strchr( "\n\r", buf[j] ) != NULL )
+			{
+				buf[j] = 0;
+				break;
+			}
+		}
+
+		t->ent.hosgrp |= ( 1 << atoi( buf ) );
+
+		i++;
+	}
+	return 0;
+}
+
+
 //Loads tile from file
 int loadtile( const char *path, struct tile *t )
 {
@@ -60,6 +121,9 @@ int loadtile( const char *path, struct tile *t )
 
 	while ( fgets( buf, 4096, f ) != NULL )
 	{
+		//Skip comments
+		if ( buf[0] == ';' ) continue;
+		
 		//Trim buffer
 		len = strlen( buf );
 		for ( i = 0; i < len; i++ )
@@ -78,6 +142,10 @@ int loadtile( const char *path, struct tile *t )
 
 		//Load sounds
 		if ( !strcmp( key, "--snd" ) ) loadsnd( f, t, atoi( val ) );
+		
+		//Load groups
+		if ( !strcmp( key, "--grp" ) ) loadgrp( f, t, atoi( val ) );
+		if ( !strcmp( key, "--hosgrp" ) ) loadhosgrp( f, t, atoi( val ) );
 
 		//Keys that don't need values
 		if ( !strcmp( key, "ground" ) ) t->ground = 1;
