@@ -4,7 +4,7 @@
 static void std_death( struct tile ***e )
 {
 	assert( e != NULL );
-	tilesnd( **e, "miau" );
+	tilesnd( **e, "death" );
 	
 }
 
