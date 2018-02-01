@@ -44,6 +44,19 @@ struct tile
 		char *ainame;
 		void ( *ai )( struct tile ***ent );
 
+		//Entity relation specifier
+		long unsigned int grp;
+		long unsigned int hosgrp;
+
+		//Combat system information
+		struct
+		{
+			double evasion, precision;
+			double armor, attack;
+			double strength;
+			double critical;
+		} combat;
+		
 		int maxhp, hp;
 		int x, y, z;
 	} ent;
