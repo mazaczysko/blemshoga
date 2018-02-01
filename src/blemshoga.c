@@ -8,10 +8,9 @@
 #include <allegro5/allegro_acodec.h>
 #include "map.h"
 #include "tile.h"
+#include "music.h"
 #include "ent.h"
 #include "blemshoga.h"
-
-int u = 0;
 
 //TODO replace this with proper solution
 struct tile player;
@@ -75,35 +74,8 @@ void map_render( int x, int y, int w, int h, int offx, int offy )
 	}
 }
 
-void aiaction( ALLEGRO_EVENT ev )
-{
-	switch ( ev.keyboard.keycode )
-	{
-		case ALLEGRO_KEY_DOWN:
-			entai( );
-			break;
 
-		case ALLEGRO_KEY_RIGHT:
-			entai( );
-			break;
-
-		case ALLEGRO_KEY_LEFT:
-			entai( );
-			break;
-
-		case ALLEGRO_KEY_UP:
-			entai( );
-			break;
-
-		case ALLEGRO_KEY_U:
-			entai( );
-
-		default:
-			break;
-	}
-}
-
-void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
+void kbdaction( ALLEGRO_EVENT ev )
 {
 	switch ( ev.keyboard.keycode )
 	{
@@ -124,20 +96,7 @@ void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 			break;
 
 		case ALLEGRO_KEY_M:
-			if( u )
-			{
-				al_play_sample( theme , 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, id );
-				u = 0;
-			}
-			else
-			{
-				al_stop_sample( id );
-				u = 1;
-			}
-			break;
-
-		case ALLEGRO_KEY_N:
-
+			music_toggle( );
 			break;
 
 		default:
@@ -145,8 +104,28 @@ void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 	}
 }
 
+//Key up actions
+void kbuaction( ALLEGRO_EVENT ev )
+{
+	switch ( ev.keyboard.keycode )
+	{
+		//Keys that should trigged AI - TEMP
+		case ALLEGRO_KEY_DOWN:
+		case ALLEGRO_KEY_RIGHT:
+		case ALLEGRO_KEY_LEFT:
+		case ALLEGRO_KEY_UP:
+		case ALLEGRO_KEY_U:
+			entai( );
+			break;
+
+		default:
+			break;
+	}
+}
+
+
 //Returns 0 when everything is ok and 1 when some error has occurred
-int gameloop( ALLEGRO_DISPLAY *win, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
+int gameloop( ALLEGRO_DISPLAY *win )
 {
 	int alive = 1;
 	const float fps = 2.f;
@@ -196,12 +175,12 @@ int gameloop( ALLEGRO_DISPLAY *win, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
-					kbdaction( ev, theme, id );
+					kbdaction( ev );
 					break;
 
 				//Key up event
 				case ALLEGRO_EVENT_KEY_UP:
-					aiaction( ev );
+					kbuaction( ev );
 					break;
 
 				//Ignore unregistered events
@@ -230,9 +209,6 @@ int main( )
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
-	ALLEGRO_SAMPLE *theme;
-	ALLEGRO_SAMPLE_ID *id = malloc( sizeof( ALLEGRO_SAMPLE_ID ) );
-
 
 	//TODO error checks - it crashes when display is not present, yay!
 	al_init( );
@@ -245,8 +221,7 @@ int main( )
 	assert( al_init_acodec_addon( ) );
 	assert( al_reserve_samples( 16 ) );
 
-	theme = al_load_sample( "resources/sounds/theme.wav" );
-	al_play_sample( theme, 1.0, 1.0, 1.0, ALLEGRO_PLAYMODE_LOOP, id );
+	
 
 	//TEMP test init
 	map_init( 32, 32, 16 );
@@ -267,6 +242,8 @@ int main( )
 	player.ent.combat.attack = 1.25;
 	player.active = 1;
 
+	music_init( );
+	music_play( );
 
 
 	//TODO error checks
@@ -301,7 +278,7 @@ int main( )
 
 
 	//Enter main game loop
-	gameloop( win, theme, id );
+	gameloop( win );
 
 	//TODO error checking
 	tiles_destroy( );
