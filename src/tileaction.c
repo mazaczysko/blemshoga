@@ -21,13 +21,23 @@ static void act_door( struct tile **self, struct tile **other, int itype )
 	}
 }
 
+static void act_vase( struct tile **self, struct tile **other, int itype )
+{
+	if ( itype == ACT_PUSH )
+	{
+		tilesnd( *self, "break" );
+		( *self )->animframe = 1;
+	}
+}
+
 static struct
 {
 	const char *name;
 	void ( *handler )( struct tile **self, struct tile **other, int itype );
 } handlers[] =
 {
-	{ "door", act_door }
+	{ "door", act_door },
+	{ "vase", act_vase },
 };
 #define HANDLER_CNT ( sizeof( handlers ) / sizeof( handlers[0] ) )
 

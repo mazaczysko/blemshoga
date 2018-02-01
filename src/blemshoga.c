@@ -247,7 +247,7 @@ int main( )
 
 	//TODO error checks
 	win = al_create_display( 20 * TILE_SIZE, 12 * TILE_SIZE + 64 );
-	al_set_window_title( win, "blemshoga - dev build from " __DATE__ " " __TIME__ );
+	al_set_window_title( win, "blemshoga - Miłosz & Jaca Soft inc. - dev build from " __DATE__ " " __TIME__ );
 
 	int i, j;
 	for ( i = 0; i < map.width; i++ )
@@ -255,6 +255,8 @@ int main( )
 			mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
 	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+	
+	mapputtile( 5, 5, 5, tile( "vase" ) );
 
 	spawn( "rat", 7, 7 );
 	spawn( "rat", 6, 6 );
