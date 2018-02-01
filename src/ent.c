@@ -34,7 +34,7 @@ void entai( )
 //Spawns entity of given name at specific coordinates
 void spawn( const char *name, int x, int y )
 {
-	struct tile **dest = mapfreetile( x, y );
+	struct tile **dest = maptile( x, y, MAP_LENT );
 	struct tile *e = NULL;
 	void *ptr = NULL;
 
@@ -206,7 +206,7 @@ int entattack( struct tile *a, struct tile *b )
 void entmove( struct tile ***eptr, int dx, int dy )
 {
 	struct tile **t, **src, **dest, *e, **etile;
-	int i, sx, sy;
+	int sx, sy;
 
 	//Pointer summary:
 	//src - pointer to the place where entity used to be
@@ -257,30 +257,40 @@ void entmove( struct tile ***eptr, int dx, int dy )
 		if ( entckhostile( e, *t ) )
 			entattack( e, *t );
 	}
-	
 
 	//Attempt move
 	if ( mapissolid( dx, dy ) ) return;
-	if ( ( dest = mapfreetile( dx, dy ) ) == NULL ) return;
+	if ( ( dest = maptile( dx, dy, MAP_LENT ) ) == NULL ) return;
 	e->ent.x = dx;
 	e->ent.y = dy;
 	src = etile;    //Source is current entity position
 	*dest = *etile; //Write proper entity pointer to destination (struct tile*)
 	*src = NULL;    //Leave source tile empty
-	
+
 	//Update all entity pointers after move
 	*eptr = dest;
 	etile = *eptr;
 	e = *etile;
-	
+
 	//Leave interaction
-	//Interact with all tiles ahead of entity
+	//Interact with solid tiles ahead of entity
 	assert( etile != NULL );
 	assert( *etile != NULL );
-	for ( i = 0; i < map.depth; i++ )
-	{
-		t = maptile( sx, sy, i );
-		if ( t == NULL || *t == NULL || ( *t )->action == NULL ) continue;
+
+	t = maptile( sx, sy, MAP_LSOLID );
+	if ( t != NULL && *t != NULL && ( *t )->action != NULL )
 		( *t )->action( t, etile, ACT_LEAVE );
+}
+
+void ent_destroy( )
+{
+	unsigned int i;
+
+	for( i = 0; i < enttcnt; i++ )
+	{
+		al_destroy_bitmap( entt[i].sprite );
+		free( entt + i );
 	}
+
+
 }
