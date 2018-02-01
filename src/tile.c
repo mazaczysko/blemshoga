@@ -78,13 +78,18 @@ int tiles_init( const char *path )
 
 void tiles_destroy( )
 {
-	unsigned int i;
+	unsigned int i, j;
 
 	for( i = 0; i < tilecnt; i++ )
 	{
 		al_destroy_bitmap( tiles[i].sprite );
 		free( tiles[i].name );
 		free( tiles[i].spritename );
+		for( j = 0; j < tiles[i].sndcnt; j++ )
+		{
+			al_destroy_sample( tiles[i].snd[j].sound );
+			free( tiles[i].snd[j].name );
+		}
 	}
 
 	free( tiles );
