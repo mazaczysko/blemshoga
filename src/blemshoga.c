@@ -304,7 +304,6 @@ int main( )
 	//TODO error checking
 	tiles_destroy( );
 
-	//TODO REPAIR THIS!!!
 	ent_destroy( );
 	al_destroy_display( win );
 

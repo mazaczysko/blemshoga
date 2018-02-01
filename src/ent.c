@@ -329,7 +329,6 @@ void ent_destroy( )
 	for( i = 0; i < enttcnt; i++ )
 	{
 		al_destroy_bitmap( entt[i].sprite );
-		free( entt + i );
 	}
 
 	free( entt );
