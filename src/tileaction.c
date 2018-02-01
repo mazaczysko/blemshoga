@@ -7,11 +7,17 @@ static void act_door( struct tile **self, struct tile **other, int itype )
 	{
 		*self = tile( "door (open)" );
 		tilesnd( *self, "door_open" );
+		assert( other != NULL );
+		assert( *other != NULL );
+		( *other )->animframe = 1;
 	}
 	else if ( itype == ACT_LEAVE )
 	{
 		*self = tile( "door (closed)" );
 		tilesnd( *self, "door_close" );
+		assert( other != NULL );
+		assert( *other != NULL );
+		( *other )->animframe = 0;
 	}
 }
 
