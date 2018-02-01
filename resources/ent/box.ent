@@ -1,0 +1,9 @@
+name box
+sprite ./resources/ent/box.png
+action box
+animframe 0
+entity
+flammable
+solid
+--snd 1
+push ./resources/sounds/push.wav

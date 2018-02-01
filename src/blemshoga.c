@@ -256,7 +256,8 @@ int main( )
 
 	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
 	
-	mapputtile( 5, 5, 5, tile( "vase" ) );
+	mapdroptile( 5, 5, tile( "vase" ) );
+	spawn( "box", 11, 11 );
 
 	spawn( "rat", 7, 7 );
 	spawn( "rat", 6, 6 );
