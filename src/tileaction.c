@@ -23,7 +23,7 @@ static void act_door( struct tile **self, struct tile **other, int itype )
 
 static void act_vase( struct tile **self, struct tile **other, int itype )
 {
-	if ( itype == ACT_PUSH )
+	if ( itype == ACT_PUSH && ( *self )->animframe == 0 )
 	{
 		tilesnd( *self, "break" );
 		( *self )->animframe = 1;
