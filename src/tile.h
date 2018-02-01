@@ -32,6 +32,7 @@ struct tile
 	unsigned int solid : 1; //Can entities walk through this tile?
 	unsigned int flammable : 1; //Can this tile be set on fire?
 	unsigned int entity : 1; //Is this tile a living thing?
+	unsigned int active : 1; //Can slot be filled again?
 	unsigned int : 0;
 
 	//Sounds
@@ -43,10 +44,11 @@ struct tile
 		struct tile ***handle;
 		char *ainame;
 		void ( *ai )( struct tile ***ent );
+		
 
 		//Entity relation specifier
-		long unsigned int grp;
-		long unsigned int hosgrp;
+		unsigned int grp;
+		unsigned int hosgrp;
 
 		//Combat system information
 		struct
@@ -55,7 +57,14 @@ struct tile
 			double armor, attack;
 			double strength;
 			double critical;
+			
+			//Defense and attack callbacks
+			void ( *defh )( struct tile ***ent );
+			void ( *atkh )( struct tile ***ent );
 		} combat;
+		
+		//Death handler
+		void ( *deathh )( struct tile ***ent );
 		
 		int maxhp, hp;
 		int x, y, z;

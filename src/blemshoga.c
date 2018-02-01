@@ -209,6 +209,11 @@ int main( )
 	player.solid = 1;
 	player.entity = 1;
 	player.sprite = al_load_bitmap( player.spritename );
+	player.ent.grp = 1 << 0;
+	player.ent.hosgrp = ~0;
+	player.ent.combat.strength = 5;
+	player.ent.combat.attack = 1.25;
+	player.active = 1;
 
 
 

@@ -1,6 +1,7 @@
 #include "tile.h"
 #include "tileaction.h"
 #include "ai.h"
+#include "ehandle.h"
 #include <stdio.h>
 #include <dirent.h>
 
@@ -165,6 +166,9 @@ int loadtile( const char *path, struct tile *t )
 		//Entity
 		if ( !strcmp( key, "ai" ) ) t->ent.ainame = strdup( val );
 		if ( !strcmp( key, "hp" ) ) sscanf( val, "%d", &t->ent.maxhp );
+		if ( !strcmp( key, "defh" ) ) t->ent.combat.defh = ehandler( val );
+		if ( !strcmp( key, "atkh" ) ) t->ent.combat.atkh = ehandler( val );
+		if ( !strcmp( key, "deathh" ) ) t->ent.deathh = ehandler( val );
 
 	}
 
@@ -181,7 +185,7 @@ int loadtile( const char *path, struct tile *t )
 	t->action = acthandler( t->actionname );
 	if ( t->sprite == NULL ) return 1;
 	t->ent.ai = aihandler( t->ent.ainame );
-
+	t->active = 1;
 
 	return 0;
 }

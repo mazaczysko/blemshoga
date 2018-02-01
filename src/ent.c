@@ -27,7 +27,8 @@ void entai( )
 
 	for ( i = 0; i < entcnt; i++ )
 	{
-		if ( ent[i].ent.ai != NULL ) ent[i].ent.ai( enth + i );
+		if ( ent[i].active && ent[i].ent.ai != NULL )
+			ent[i].ent.ai( enth + i );
 	}
 }
 
@@ -38,13 +39,14 @@ void spawn( const char *name, int x, int y )
 	struct tile *e = NULL;
 	void *ptr = NULL;
 
-	int i;
+	int i, slot;
 
 	if ( dest == NULL )
 		return;
 
 	assert( entt != NULL );
 
+	//Find right template
 	for( i = 0; i < enttcnt; i++ )
 	{
 			assert( name != NULL );
@@ -56,41 +58,57 @@ void spawn( const char *name, int x, int y )
 			}
 	}
 
-	//Reallocate arrays
-	struct tile *oldent = ent;
- 	ptr = realloc( ent, ( entcnt + 1 ) * sizeof( struct tile ) );
-	if ( ptr == NULL ) return;
-	ent = ptr;
-
-	//Update old map pointers (realloc doesn't guarantee to return identical pointer)
+	//Look for free slot
 	for ( i = 0; i < entcnt; i++ )
 	{
-		*enth[i] = ent + ( *enth[i] - oldent );
+		if ( !ent[i].active )
+		{
+			slot = i;
+			break;
+		}
 	}
-
-	struct tile ***oldenth = enth;
-	ptr = realloc( enth, ( entcnt + 1 ) * sizeof( struct tile** ) );
-	if ( ptr == NULL ) return;
-	enth = ptr;
-
-	//Update old handles - handle array may have moved
-	for ( i = 0; i < entcnt; i++ )
+	
+	//If no free slots, allocate one
+	if ( i == entcnt )
 	{
-		ent[i].ent.handle = enth + ( ent[i].ent.handle - oldenth );
+		//Reallocate arrays
+		struct tile *oldent = ent;
+	 	ptr = realloc( ent, ( entcnt + 1 ) * sizeof( struct tile ) );
+		if ( ptr == NULL ) return;
+		ent = ptr;
+
+		//Update old map pointers (realloc doesn't guarantee to return identical pointer)
+		for ( i = 0; i < entcnt; i++ )
+		{
+			*enth[i] = ent + ( *enth[i] - oldent );
+		}
+
+		struct tile ***oldenth = enth;
+		ptr = realloc( enth, ( entcnt + 1 ) * sizeof( struct tile** ) );
+		if ( ptr == NULL ) return;
+		enth = ptr;
+
+		//Update old handles - handle array may have moved
+		for ( i = 0; i < entcnt; i++ )
+		{
+			ent[i].ent.handle = enth + ( ent[i].ent.handle - oldenth );
+		}
+		
+		slot = entcnt;
+		entcnt++;
 	}
 
 	//Create copy of the template
-	e = memcpy( ent + entcnt, e, sizeof( struct tile ) );
-
-	//TODO e->ent.z
+	e = memcpy( ent + slot, e, sizeof( struct tile ) );
+	
 	e->ent.x = x;
 	e->ent.y = y;
+	e->ent.hp = e->ent.maxhp;
 
 	//Put entity on map and properly link its handle
-	*dest = ent + entcnt;
-	e->ent.handle = enth + entcnt;
-	enth[entcnt] = dest;
-	entcnt++;
+	*dest = ent + slot;
+	e->ent.handle = enth + slot;
+	enth[slot] = dest;
 }
 
 //Loads entity files from directory
@@ -143,17 +161,33 @@ int entckhostile( struct tile *a, struct tile *b )
 	assert( a->entity );
 	assert( b->entity );
 	
-	if ( a == NULL || b == NULL || !a->entity || !b->entity ) return -1;
+	if ( a == NULL || b == NULL || !a->entity || !b->entity || !a->active || !b->active ) return -1;
 	
 	return ( a->ent.hosgrp & b->ent.grp ) != 0;
 }
 
 //UNTESTED
 //Kills an entity
-void entkill( struct tile *e )
+void entkill( struct tile ***eptr )
 {
+	assert( eptr != NULL );
+	struct tile **etile = *eptr;
+	assert( etile != NULL );
+	struct tile *e = *etile;
+	assert( e != NULL );
+	
 	//TODO
-	fprintf( stderr, "An entity dies..." );
+	//fprintf( stderr, "An entity dies..." );
+	if ( e->ent.deathh != NULL ) e->ent.deathh( e->ent.handle );
+	
+	//This is gonna be so f*cked up...
+	
+	//Mark entity slot as free and remove handle just in case
+	e->active = 0;
+	e->ent.handle = NULL;
+	
+	//Remove from map	
+	*etile = NULL;
 }
 
 //UNTESTED
@@ -168,7 +202,7 @@ int entattack( struct tile *a, struct tile *b )
 	assert( a->entity );
 	assert( b->entity );
 	
-	if ( a == NULL || b == NULL || !a->entity || !b->entity ) return -1;
+	if ( a == NULL || b == NULL || !a->entity || !b->entity || !a->active || !b->active ) return -1;
 	
 	//Is this a critical hit?
 	int crit = ( ( random( ) % 10000 ) / 10000.0 ) < a->ent.combat.critical;
@@ -187,15 +221,18 @@ int entattack( struct tile *a, struct tile *b )
 	//Calculate defense power and bias (+-10%) - TODO it should depend on more things
 	double dbias = ( ( ( rand( ) % 10000 ) / 10000.0 ) * 0.2 - 0.1 ) * b->ent.combat.armor;
 	attack -= b->ent.combat.armor - dbias;
+	//TEMP
+	fprintf( stderr, "%f damage dealt!\n", attack );
 	attack = (int)attack;
 	if ( attack < 0 ) attack = 0;
 	
-	//DEBUG
-	fprintf( stderr, "damage dealt: %f\n", attack );
+	//Actions
+	if ( b->ent.combat.defh != NULL ) b->ent.combat.defh( b->ent.handle );
+	if ( a->ent.combat.atkh != NULL ) a->ent.combat.atkh( b->ent.handle );
 	
 	//Die if killed (how clever)
 	b->ent.hp -= attack;
-	if ( b->ent.hp <= 0 ) entkill( b );
+	if ( b->ent.hp <= 0 ) entkill( b->ent.handle );
 	return attack;
 }
 
@@ -223,7 +260,7 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	assert( ( **eptr )->entity != 0 );
 
 	//This is so stupid, yet it has to be here :(
-	if ( eptr == NULL || *eptr == NULL || **eptr == NULL ) return;
+	if ( eptr == NULL || *eptr == NULL || **eptr == NULL || !( **eptr )->active ) return;
 	etile = *eptr;
 	e = *etile;
 	if ( !e->entity ) return;
