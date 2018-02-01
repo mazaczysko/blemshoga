@@ -35,3 +35,8 @@ void music_init( )
 {
 	music = al_load_sample( "resources/sounds/theme.wav" );
 }
+
+void music_destroy( )
+{
+	al_destroy_sample( music );
+}

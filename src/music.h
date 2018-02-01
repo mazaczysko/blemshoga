@@ -5,5 +5,6 @@ extern void music_toggle( );
 extern void music_play( );
 extern void music_stop( );
 extern void music_init( );
+extern void music_destroy( );
 
 #endif

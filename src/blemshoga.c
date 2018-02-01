@@ -221,7 +221,7 @@ int main( )
 	assert( al_init_acodec_addon( ) );
 	assert( al_reserve_samples( 16 ) );
 
-	
+
 
 	//TEMP test init
 	map_init( 32, 32, 16 );
@@ -282,8 +282,8 @@ int main( )
 
 	//TODO error checking
 	tiles_destroy( );
-
 	ent_destroy( );
+	music_destroy( );
 	al_destroy_display( win );
 
 	return 0;
