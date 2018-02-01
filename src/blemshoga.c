@@ -11,7 +11,6 @@
 #include "ent.h"
 #include "blemshoga.h"
 
-int u = 0;
 
 //TODO replace this with proper solution
 struct tile player;
@@ -105,6 +104,8 @@ void aiaction( ALLEGRO_EVENT ev )
 
 void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 {
+	static int u;
+
 	switch ( ev.keyboard.keycode )
 	{
 		case ALLEGRO_KEY_DOWN:
@@ -136,9 +137,6 @@ void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 			}
 			break;
 
-		case ALLEGRO_KEY_N:
-
-			break;
 
 		default:
 			break;
@@ -307,7 +305,7 @@ int main( )
 	tiles_destroy( );
 
 	//TODO REPAIR THIS!!!
-	//ent_destroy( );
+	ent_destroy( );
 	al_destroy_display( win );
 
 	return 0;

@@ -67,7 +67,7 @@ void spawn( const char *name, int x, int y )
 			break;
 		}
 	}
-	
+
 	//If no free slots, allocate one
 	if ( i == entcnt )
 	{
@@ -93,14 +93,14 @@ void spawn( const char *name, int x, int y )
 		{
 			ent[i].ent.handle = enth + ( ent[i].ent.handle - oldenth );
 		}
-		
+
 		slot = entcnt;
 		entcnt++;
 	}
 
 	//Create copy of the template
 	e = memcpy( ent + slot, e, sizeof( struct tile ) );
-	
+
 	e->ent.x = x;
 	e->ent.y = y;
 	e->ent.hp = e->ent.maxhp;
@@ -160,9 +160,9 @@ int entckhostile( struct tile *a, struct tile *b )
 	assert( b != NULL );
 	assert( a->entity );
 	assert( b->entity );
-	
+
 	if ( a == NULL || b == NULL || !a->entity || !b->entity || !a->active || !b->active ) return -1;
-	
+
 	return ( a->ent.hosgrp & b->ent.grp ) != 0;
 }
 
@@ -175,24 +175,24 @@ void entkill( struct tile ***eptr )
 	assert( etile != NULL );
 	struct tile *e = *etile;
 	assert( e != NULL );
-	
+
 	//TODO
 	//fprintf( stderr, "An entity dies..." );
 	if ( e->ent.deathh != NULL ) e->ent.deathh( e->ent.handle );
-	
+
 	//This is gonna be so f*cked up...
-	
+
 	//Mark entity slot as free and remove handle just in case
 	e->active = 0;
 	e->ent.handle = NULL;
-	
-	//Remove from map	
+
+	//Remove from map
 	*etile = NULL;
 }
 
 //UNTESTED
 //Enforces entity A to attack entity B
-//Uses information from 
+//Uses information from
 //Returns -1 on error or damage dealt on success
 int entattack( struct tile *a, struct tile *b )
 {
@@ -201,23 +201,23 @@ int entattack( struct tile *a, struct tile *b )
 	assert( b != NULL );
 	assert( a->entity );
 	assert( b->entity );
-	
+
 	if ( a == NULL || b == NULL || !a->entity || !b->entity || !a->active || !b->active ) return -1;
-	
+
 	//Is this a critical hit?
 	int crit = ( ( random( ) % 10000 ) / 10000.0 ) < a->ent.combat.critical;
-	
+
 	//Check dodge
 	if ( ( rand( ) % 10000 / 10000.0 ) < ( a->ent.combat.precision - b->ent.combat.evasion ) )
 		return 0;
 
-	
+
 	//Calculate attack power and bias (+-10%) - TODO it should depend on more things
 	double attack = a->ent.combat.strength * a->ent.combat.attack;
 	double abias = ( ( ( rand( ) % 10000 ) / 10000.0 ) * 0.2 - 0.1 ) * attack;
 	if ( crit ) attack *= 1.5;
 	attack += abias;
-	
+
 	//Calculate defense power and bias (+-10%) - TODO it should depend on more things
 	double dbias = ( ( ( rand( ) % 10000 ) / 10000.0 ) * 0.2 - 0.1 ) * b->ent.combat.armor;
 	attack -= b->ent.combat.armor - dbias;
@@ -225,11 +225,11 @@ int entattack( struct tile *a, struct tile *b )
 	fprintf( stderr, "%f damage dealt!\n", attack );
 	attack = (int)attack;
 	if ( attack < 0 ) attack = 0;
-	
+
 	//Actions
 	if ( b->ent.combat.defh != NULL ) b->ent.combat.defh( b->ent.handle );
 	if ( a->ent.combat.atkh != NULL ) a->ent.combat.atkh( b->ent.handle );
-	
+
 	//Die if killed (how clever)
 	b->ent.hp -= attack;
 	if ( b->ent.hp <= 0 ) entkill( b->ent.handle );
@@ -286,7 +286,7 @@ struct tile ***entmove( struct tile ***eptr, int dx, int dy )
 		if ( t == NULL || *t == NULL || ( *t )->action == NULL ) continue;
 		( *t )->action( t, etile, ACT_PUSH );
 	}
-	
+
 	//Attack hostile entities
 	t = maptile( dx, dy, MAP_LENT );
 	if ( t != NULL && *t != NULL )
@@ -318,7 +318,7 @@ struct tile ***entmove( struct tile ***eptr, int dx, int dy )
 	t = maptile( sx, sy, MAP_LSOLID );
 	if ( t != NULL && *t != NULL && ( *t )->action != NULL )
 		( *t )->action( t, etile, ACT_LEAVE );
-		
+
 	return eptr;
 }
 
@@ -332,5 +332,6 @@ void ent_destroy( )
 		free( entt + i );
 	}
 
+	free( entt );
 
 }
