@@ -205,3 +205,16 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	if ( t != NULL && *t != NULL && ( *t )->action != NULL )
 		( *t )->action( t, etile, ACT_LEAVE );
 }
+
+void ent_destroy( )
+{
+	unsigned int i;
+
+	for( i = 0; i < enttcnt; i++ )
+	{
+		al_destroy_bitmap( entt[i].sprite );
+		free( entt + i );
+	}
+
+
+}
