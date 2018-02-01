@@ -131,6 +131,74 @@ int ent_init( const char *path )
 	return 0;
 }
 
+//UNTESTED
+//Checks if entity A is hostile to entity B
+//Returns 0 or 1 on success and -1 on failure
+//Or fails an asssertion if NDEBUG is not defined
+int entckhostile( struct tile *a, struct tile *b )
+{
+	//For debug yay
+	assert( a != NULL );
+	assert( b != NULL );
+	assert( a->entity );
+	assert( b->entity );
+	
+	if ( a == NULL || b == NULL || !a->entity || !b->entity ) return -1;
+	
+	return ( a->ent.hosgrp & b->ent.grp ) != 0;
+}
+
+//UNTESTED
+//Kills an entity
+void entkill( struct tile *e )
+{
+	//TODO
+	fprintf( stderr, "An entity dies..." );
+}
+
+//UNTESTED
+//Enforces entity A to attack entity B
+//Uses information from 
+//Returns -1 on error or damage dealt on success
+int entattack( struct tile *a, struct tile *b )
+{
+	//For debug yay
+	assert( a != NULL );
+	assert( b != NULL );
+	assert( a->entity );
+	assert( b->entity );
+	
+	if ( a == NULL || b == NULL || !a->entity || !b->entity ) return -1;
+	
+	//Is this a critical hit?
+	int crit = ( ( random( ) % 10000 ) / 10000.0 ) < a->ent.combat.critical;
+	
+	//Check dodge
+	if ( ( rand( ) % 10000 / 10000.0 ) < ( a->ent.combat.precision - b->ent.combat.evasion ) )
+		return 0;
+
+	
+	//Calculate attack power and bias (+-10%) - TODO it should depend on more things
+	double attack = a->ent.combat.strength * a->ent.combat.attack;
+	double abias = ( ( ( rand( ) % 10000 ) / 10000.0 ) * 0.2 - 0.1 ) * attack;
+	if ( crit ) attack *= 1.5;
+	attack += abias;
+	
+	//Calculate defense power and bias (+-10%) - TODO it should depend on more things
+	double dbias = ( ( ( rand( ) % 10000 ) / 10000.0 ) * 0.2 - 0.1 ) * b->ent.combat.armor;
+	attack -= b->ent.combat.armor - dbias;
+	attack = (int)attack;
+	if ( attack < 0 ) attack = 0;
+	
+	//DEBUG
+	fprintf( stderr, "damage dealt: %f\n", attack );
+	
+	//Die if killed (how clever)
+	b->ent.hp -= attack;
+	if ( b->ent.hp <= 0 ) entkill( b );
+	return attack;
+}
+
 //Moves entity
 //Map contains pointer to the actual entity data
 //Since we must know where the entity is, we keep a pointer to its tile on the map
@@ -171,15 +239,25 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	//TODO skip move after certain kinds of interactions
 	//TODO call proper fight system function if destination is an entity
 
-	//Interact with all tiles ahead of entity
+	//Interact with all tiles ahead of entity - should indeed affect all the layers. Maybe we'll get some boxes sometime?
 	assert( etile != NULL );
 	assert( *etile != NULL );
 	for ( i = 0; i < map.depth; i++ )
 	{
-		t = maptile( dx,dy, i );
+		t = maptile( dx, dy, i );
 		if ( t == NULL || *t == NULL || ( *t )->action == NULL ) continue;
 		( *t )->action( t, etile, ACT_PUSH );
 	}
+	
+	//Attack hostile entities
+	t = maptile( dx, dy, MAP_LENT );
+	if ( t != NULL && *t != NULL )
+	{
+		//TODO waht if user wants to attack a neutral entity?
+		if ( entckhostile( e, *t ) )
+			entattack( e, *t );
+	}
+	
 
 	//Attempt move
 	if ( mapissolid( dx, dy ) ) return;
