@@ -206,7 +206,7 @@ int entattack( struct tile *a, struct tile *b )
 void entmove( struct tile ***eptr, int dx, int dy )
 {
 	struct tile **t, **src, **dest, *e, **etile;
-	int sx, sy;
+	int sx, sy, i;
 
 	//Pointer summary:
 	//src - pointer to the place where entity used to be
