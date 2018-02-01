@@ -11,6 +11,8 @@
 #include "ent.h"
 #include "blemshoga.h"
 
+int u = 0;
+
 //TODO replace this with proper solution
 struct tile player;
 struct tile **pptr;
@@ -101,7 +103,7 @@ void aiaction( ALLEGRO_EVENT ev )
 	}
 }
 
-void kbdaction( ALLEGRO_EVENT ev )
+void kbdaction( ALLEGRO_EVENT ev, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 {
 	switch ( ev.keyboard.keycode )
 	{
@@ -121,13 +123,30 @@ void kbdaction( ALLEGRO_EVENT ev )
 			entmove( &pptr, 0, -1 );
 			break;
 
+		case ALLEGRO_KEY_M:
+			if( u )
+			{
+				al_play_sample( theme , 1.0, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, id );
+				u = 0;
+			}
+			else
+			{
+				al_stop_sample( id );
+				u = 1;
+			}
+			break;
+
+		case ALLEGRO_KEY_N:
+
+			break;
+
 		default:
 			break;
 	}
 }
 
 //Returns 0 when everything is ok and 1 when some error has occurred
-int gameloop( ALLEGRO_DISPLAY *win )
+int gameloop( ALLEGRO_DISPLAY *win, ALLEGRO_SAMPLE *theme, ALLEGRO_SAMPLE_ID *id )
 {
 	int alive = 1;
 	const float fps = 2.f;
@@ -177,7 +196,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key down event
 				case ALLEGRO_EVENT_KEY_DOWN:
-					kbdaction( ev );
+					kbdaction( ev, theme, id );
 					break;
 
 				//Key up event
@@ -211,6 +230,8 @@ int main( )
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
+	ALLEGRO_SAMPLE *theme;
+	ALLEGRO_SAMPLE_ID *id = malloc( sizeof( ALLEGRO_SAMPLE_ID ) );
 
 
 	//TODO error checks - it crashes when display is not present, yay!
@@ -223,6 +244,9 @@ int main( )
 	assert( al_install_audio( ) );
 	assert( al_init_acodec_addon( ) );
 	assert( al_reserve_samples( 16 ) );
+
+	theme = al_load_sample( "resources/sounds/theme.wav" );
+	al_play_sample( theme, 1.0, 1.0, 1.0, ALLEGRO_PLAYMODE_LOOP, id );
 
 	//TEMP test init
 	map_init( 32, 32, 16 );
@@ -255,7 +279,7 @@ int main( )
 			mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
 	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
-	
+
 	mapputtile( 5, 5, 5, tile( "vase" ) );
 
 	spawn( "rat", 7, 7 );
@@ -276,7 +300,7 @@ int main( )
 
 
 	//Enter main game loop
-	gameloop( win );
+	gameloop( win, theme, id );
 
 	//TODO error checking
 	tiles_destroy( );
