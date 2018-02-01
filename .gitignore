@@ -5,3 +5,4 @@ blemshoga
 *.swp
 *.log
 *.tmp
+.gdb_history
