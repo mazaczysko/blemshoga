@@ -1,10 +1,12 @@
 #include "ehandle.h"
 #include "tile.h"
+#include "map.h"
 
 static void std_death( struct tile ***e )
 {
 	assert( e != NULL );
 	tilesnd( **e, "death" );
+	mapputtile( (**e)->ent.x, (**e)->ent.y, 5, tile( "blood" ) ); 
 	
 }
 
