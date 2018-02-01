@@ -1,4 +1,6 @@
 #include "tile.h"
+#include "map.h"
+#include "ent.h"
 #include "tileaction.h"
 
 static void act_door( struct tile **self, struct tile **other, int itype )
@@ -30,6 +32,37 @@ static void act_vase( struct tile **self, struct tile **other, int itype )
 	}
 }
 
+static void act_box( struct tile **self, struct tile **other, int itype )
+{
+	int dx, dy;
+	struct tile ***handle;
+	
+	assert( (*self)->entity );
+	
+	if ( itype == ACT_PUSH )
+	{
+		dx = ( ( *other )->ent.x - ( *self )->ent.x );
+		dy = ( ( *other )->ent.y - ( *self )->ent.y );
+		if ( !mapissolid( dx, dy ) )
+		{	
+			handle = entmove( ( *self )->ent.handle, -dx, -dy );	//update handle on move
+			if ( handle != NULL )
+			{
+				self = *handle;
+				tilesnd( *self, "push" );
+			}
+		}
+	}
+}
+
+static void act_blood( struct tile **self, struct tile **other, int itype )
+{
+	if ( itype == ACT_PUSH || itype == ACT_LEAVE )
+	{
+		tilesnd( *self, "mluck" );
+	}
+}
+
 static struct
 {
 	const char *name;
@@ -38,6 +71,8 @@ static struct
 {
 	{ "door", act_door },
 	{ "vase", act_vase },
+	{ "box", act_box },
+	{ "blood", act_blood },
 };
 #define HANDLER_CNT ( sizeof( handlers ) / sizeof( handlers[0] ) )
 

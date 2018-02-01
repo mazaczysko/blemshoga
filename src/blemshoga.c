@@ -280,7 +280,8 @@ int main( )
 
 	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
 
-	mapputtile( 5, 5, 5, tile( "vase" ) );
+	mapdroptile( 5, 5, tile( "vase" ) );
+	spawn( "box", 11, 11 );
 
 	spawn( "rat", 7, 7 );
 	spawn( "rat", 6, 6 );
@@ -304,7 +305,9 @@ int main( )
 
 	//TODO error checking
 	tiles_destroy( );
-	ent_destroy( );
+
+	//TODO REPAIR THIS!!!
+	//ent_destroy( );
 	al_destroy_display( win );
 
 	return 0;

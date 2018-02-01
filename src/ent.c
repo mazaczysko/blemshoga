@@ -240,7 +240,8 @@ int entattack( struct tile *a, struct tile *b )
 //Map contains pointer to the actual entity data
 //Since we must know where the entity is, we keep a pointer to its tile on the map
 //Because this function can alter entity location, it has to be able to modify pointer decribed above
-void entmove( struct tile ***eptr, int dx, int dy )
+//Returns entity handle on success, NULL on failure
+struct tile ***entmove( struct tile ***eptr, int dx, int dy )
 {
 	struct tile **t, **src, **dest, *e, **etile;
 	int sx, sy, i;
@@ -260,10 +261,10 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	assert( ( **eptr )->entity != 0 );
 
 	//This is so stupid, yet it has to be here :(
-	if ( eptr == NULL || *eptr == NULL || **eptr == NULL || !( **eptr )->active ) return;
+	if ( eptr == NULL || *eptr == NULL || **eptr == NULL || !( **eptr )->active ) return NULL;
 	etile = *eptr;
 	e = *etile;
-	if ( !e->entity ) return;
+	if ( !e->entity ) return NULL;
 
 	//dx, dy - destination xy
 	//sx, sy - source xy
@@ -271,7 +272,7 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	sy = e->ent.y;
 	dx += sx;
 	dy += sy;
-	if ( dx < 0 || dy < 0 || dx >= map.width || dy >= map.height ) return;
+	if ( dx < 0 || dy < 0 || dx >= map.width || dy >= map.height ) return NULL;
 
 	//TODO skip move after certain kinds of interactions
 	//TODO call proper fight system function if destination is an entity
@@ -296,8 +297,8 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	}
 
 	//Attempt move
-	if ( mapissolid( dx, dy ) ) return;
-	if ( ( dest = maptile( dx, dy, MAP_LENT ) ) == NULL ) return;
+	if ( mapissolid( dx, dy ) ) return NULL;
+	if ( ( dest = maptile( dx, dy, MAP_LENT ) ) == NULL ) return NULL;
 	e->ent.x = dx;
 	e->ent.y = dy;
 	src = etile;    //Source is current entity position
@@ -317,6 +318,8 @@ void entmove( struct tile ***eptr, int dx, int dy )
 	t = maptile( sx, sy, MAP_LSOLID );
 	if ( t != NULL && *t != NULL && ( *t )->action != NULL )
 		( *t )->action( t, etile, ACT_LEAVE );
+		
+	return eptr;
 }
 
 void ent_destroy( )
