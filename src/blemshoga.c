@@ -135,21 +135,21 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 	if ( win == NULL )
 	{
-		//TODO error handler
+		fprintf( stderr, "%s: unexpected window error!\n", __FILE__ );
 		return 1;
 	}
 
 	timer = al_create_timer( 1.0 / fps );
 	if ( timer == NULL )
 	{
-		//TODO error handler
+		fprintf( stderr, "%s: error creating timer!\n", __FILE__ );
 		return 1;
 	}
 
 	queue = al_create_event_queue( );
 	if ( queue == NULL )
 	{
-		//TODO error handler
+		fprintf( stderr, "%s: error creating event queue!\n", __FILE__ );
 		return 1;
 	}
 
@@ -204,22 +204,57 @@ int gameloop( ALLEGRO_DISPLAY *win )
 	return 0;
 }
 
-int main( )
+
+
+int main( int argc, char** argv )
 {
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
 
-	//TODO error checks - it crashes when display is not present, yay!
-	al_init( );
-	al_install_keyboard( );
-	al_init_image_addon( );
-	al_init_font_addon( );
-	al_init_ttf_addon( );
 
-	assert( al_install_audio( ) );
-	assert( al_init_acodec_addon( ) );
-	assert( al_reserve_samples( 16 ) );
+	//TODO move to special routine
+	if( !al_init( ) )
+	{
+		fprintf(stderr, "%s: error initializing allegro!\n", argv[0] );
+		exit;
+	}
+
+	if( !al_install_keyboard( ) )
+	{
+		fprintf(stderr, "%s: error installing keyboard!\n", argv[0] );
+		exit;
+	}
+
+	if( !al_init_image_addon( ) )
+	{
+		fprintf(stderr, "%s: error initializing image addon!\n", argv[0] );
+		exit;
+	}
+
+	if( !al_init_font_addon( ) )
+	{
+		fprintf(stderr, "%s: error initializing font addon!\n", argv[0] );
+		exit;
+	}
+
+	if( !al_install_audio( ) )
+	{
+		fprintf(stderr, "%s: error installing audio\n", argv[0] );
+		exit;
+	}
+
+	if( !al_init_acodec_addon( ) )
+	{
+		fprintf(stderr, "%s: error initializing acodec addon!\n", argv[0] );
+		exit;
+	}
+
+	if( !al_reserve_samples( 16 ) )
+	{
+		fprintf(stderr, "%s: error reserving samples!\n", argv[0] );
+		exit;
+	}
 
 
 
@@ -246,8 +281,13 @@ int main( )
 	music_play( );
 
 
-	//TODO error checks
-	win = al_create_display( 20 * TILE_SIZE, 12 * TILE_SIZE + 64 );
+	if( ( win = al_create_display( 20 * TILE_SIZE, 12 * TILE_SIZE + 64 ) ) == NULL )
+	{
+		fprintf(stderr, "%s: error creating window!\n", argv[0] );
+		return 1;
+	}
+
+	//Come on... It cannot crash
 	al_set_window_title( win, "blemshoga - Miłosz & Jaca Soft inc. - dev build from " __DATE__ " " __TIME__ );
 
 	int i, j;
