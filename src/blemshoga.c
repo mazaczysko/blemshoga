@@ -73,6 +73,34 @@ void map_render( int x, int y, int w, int h, int offx, int offy )
 	}
 }
 
+void aiaction( ALLEGRO_EVENT ev )
+{
+	switch ( ev.keyboard.keycode )
+	{
+		case ALLEGRO_KEY_DOWN:
+			entai( );
+			break;
+
+		case ALLEGRO_KEY_RIGHT:
+			entai( );
+			break;
+
+		case ALLEGRO_KEY_LEFT:
+			entai( );
+			break;
+
+		case ALLEGRO_KEY_UP:
+			entai( );
+			break;
+
+		case ALLEGRO_KEY_U:
+			entai( );
+
+		default:
+			break;
+	}
+}
+
 void kbdaction( ALLEGRO_EVENT ev )
 {
 	switch ( ev.keyboard.keycode )
@@ -154,7 +182,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 				//Key up event
 				case ALLEGRO_EVENT_KEY_UP:
-					entai( );
+					aiaction( ev );
 					break;
 
 				//Ignore unregistered events
