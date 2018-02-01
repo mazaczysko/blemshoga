@@ -4,7 +4,7 @@
 #include "tile.h"
 
 extern int ent_init( const char *path );
-extern void entmove( struct tile ***eptr, int dx, int dy );
+extern struct tile ***entmove( struct tile ***eptr, int dx, int dy );
 extern void spawn( const char *name, int x, int y );
 extern void entai( );
 extern void ent_destroy( );

@@ -35,14 +35,20 @@ static void act_vase( struct tile **self, struct tile **other, int itype )
 static void act_box( struct tile **self, struct tile **other, int itype )
 {
 	int dx, dy;
+	struct tile ***handle;
+	
 	if ( itype == ACT_PUSH )
 	{
 		dx = ( ( *other )->ent.x - ( *self )->ent.x );
 		dy = ( ( *other )->ent.y - ( *self )->ent.y );
 		if ( !mapissolid( dx, dy ) )
-		{
-			entmove( ( *self )->ent.handle, -dx, -dy );
-			tilesnd( *self, "push" );	
+		{	
+			handle = entmove( ( *self )->ent.handle, -dx, -dy );	//update handle on move
+			if ( handle != NULL )
+			{
+				self = *handle;
+				tilesnd( *self, "push" );
+			}
 		}
 	}
 }
