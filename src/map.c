@@ -54,9 +54,9 @@ struct tile** mapfreetile( int x, int y )
 }
 
 //Puts given tile on the bottommost free tile on give coordinates
-struct tile** mapputtile( int x, int y, struct tile* tile )
+struct tile** mapputtile( int x, int y, int z, struct tile* tile )
 {
-	struct tile **t = mapfreetile( x, y );
+	struct tile **t = maptile( x, y, z );
 
 	if( t != NULL )
 	{

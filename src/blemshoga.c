@@ -219,9 +219,10 @@ int main( )
 	int i, j;
 	for ( i = 0; i < map.width; i++ )
 		for ( j = 0; j < map.height; j++ )
-			mapputtile( i, j, tile( "stone floor" ) );
+			mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
-	pptr = mapputtile( player.ent.x, player.ent.y, &player );
+	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+
 	spawn( "rat", 7, 7 );
 	spawn( "rat", 6, 6 );
 	spawn( "rat", 4, 4 );
@@ -232,10 +233,11 @@ int main( )
 	//TEMP
 	//Some horizontal wall
 	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, 8, tile( "stone wall" ) );
+		mapputtile( i, 8, MAP_LSOLID, tile( "stone wall" ) );
 	//Doors
-	*maptile( 8 , 8, 1 ) = tile( "door (open)" );
-	*maptile( 2, 2, 1 ) = tile( "door (open)" );
+	mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
+	mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
+
 
 
 	//Enter main game loop
