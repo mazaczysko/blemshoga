@@ -217,43 +217,43 @@ int main( int argc, char** argv )
 	if( !al_init( ) )
 	{
 		fprintf(stderr, "%s: error initializing allegro!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_install_keyboard( ) )
 	{
 		fprintf(stderr, "%s: error installing keyboard!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_init_image_addon( ) )
 	{
 		fprintf(stderr, "%s: error initializing image addon!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_init_font_addon( ) )
 	{
 		fprintf(stderr, "%s: error initializing font addon!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_install_audio( ) )
 	{
 		fprintf(stderr, "%s: error installing audio\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_init_acodec_addon( ) )
 	{
 		fprintf(stderr, "%s: error initializing acodec addon!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 	if( !al_reserve_samples( 16 ) )
 	{
 		fprintf(stderr, "%s: error reserving samples!\n", argv[0] );
-		exit;
+		exit( EXIT_FAILURE );
 	}
 
 
