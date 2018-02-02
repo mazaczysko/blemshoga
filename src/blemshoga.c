@@ -8,6 +8,7 @@
 #include <allegro5/allegro_acodec.h>
 #include "map.h"
 #include "tile.h"
+#include "gene.h"
 #include "music.h"
 #include "ent.h"
 #include "blemshoga.h"
@@ -290,30 +291,35 @@ int main( int argc, char** argv )
 	//Come on... It cannot crash
 	al_set_window_title( win, "blemshoga - Miłosz & Jaca Soft inc. - dev build from " __DATE__ " " __TIME__ );
 
-	int i, j;
-	for ( i = 0; i < map.width; i++ )
-		for ( j = 0; j < map.height; j++ )
-			mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
-	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+	//TEMP commented for generator tests
+	//int i, j;
+	//for ( i = 0; i < map.width; i++ )
+	//	for ( j = 0; j < map.height; j++ )
+	//		mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
-	mapdroptile( 5, 5, tile( "vase" ) );
-	spawn( "box", 11, 11 );
+	//pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+    //
+	// mapdroptile( 5, 5, tile( "vase" ) );
+	// spawn( "box", 11, 11 );
+    //
+	// spawn( "rat", 7, 7 );
+	// spawn( "rat", 6, 6 );
+	// spawn( "rat", 4, 4 );
+	// spawn( "rat", 3, 3 );
+	// spawn( "rat", 10, 10 );
 
-	spawn( "rat", 7, 7 );
-	spawn( "rat", 6, 6 );
-	spawn( "rat", 4, 4 );
-	spawn( "rat", 3, 3 );
-	spawn( "rat", 10, 10 );
+	// //TEMP
+	// //Some horizontal wall
+	// for( int i = 0; i < map.width; i++ )
+	// 	mapputtile( i, 8, MAP_LSOLID, tile( "stone wall" ) );
+	// //Doors
+	// mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
+	// mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
 
+	makeroom( 5, 0, 7, 5, 3 );
+	makecorridor( 3, 7, 5, 3 );
 
-	//TEMP
-	//Some horizontal wall
-	for( int i = 0; i < map.width; i++ )
-		mapputtile( i, 8, MAP_LSOLID, tile( "stone wall" ) );
-	//Doors
-	mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
-	mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
 
 
 
