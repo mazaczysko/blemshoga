@@ -322,7 +322,6 @@ int main( int argc, char** argv )
 
 	//TODO error checking
 	tiles_destroy( );
-	ent_destroy( );
 	music_destroy( );
 	al_destroy_display( win );
 

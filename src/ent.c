@@ -8,10 +8,6 @@
 #include <stdio.h>
 #include <dirent.h>
 
-//Entity templates
-static struct tile *entt = NULL;
-static int enttcnt = 0;
-
 //Entity tiles
 static struct tile *ent = NULL;
 static int entcnt = 0;
@@ -44,19 +40,7 @@ void spawn( const char *name, int x, int y )
 	if ( dest == NULL )
 		return;
 
-	assert( entt != NULL );
-
-	//Find right template
-	for( i = 0; i < enttcnt; i++ )
-	{
-			assert( name != NULL );
-			assert( entt[i].name != NULL );
-			if( !strcmp( entt[i].name, name ) )
-			{
-				e = entt + i;
-				break;
-			}
-	}
+	e = tile( name );
 
 	//Look for free slot
 	for ( i = 0; i < entcnt; i++ )
@@ -111,43 +95,6 @@ void spawn( const char *name, int x, int y )
 	enth[slot] = dest;
 }
 
-//Loads entity files from directory
-//DO NOT CALL DURING THE GAME (realloc)
-int ent_init( const char *path )
-{
-	char filename[PATH_MAX];
-	const char *ext;
-	struct tile t, *entarr;
-
-	DIR *d = opendir( path );
-	struct dirent *dent;
-
-	assert( d != NULL );
-
-	while ( ( dent = readdir( d ) ) != NULL )
-	{
-		//Accept only *.ent files
-		ext = strrchr( dent->d_name, '.' );
-		if ( ext == NULL ) continue;
-		if ( strcmp( ext + 1, "ent" ) ) continue;
-
-		assert( snprintf( filename, PATH_MAX, "%s/%s", path, dent->d_name ) != 0 );
-		if ( !loadtile( filename, &t ) )
-		{
-			entarr = realloc( entt, ( enttcnt + 1 ) * sizeof( struct tile ) );
-			assert( entarr != NULL );
-			entt = entarr;
-			entt[enttcnt++] = t;
-		}
-		else
-		{
-			fprintf( stderr, "entity loading failed - '%s' skipped!\n", dent->d_name );
-		}
-	}
-
-	closedir( d );
-	return 0;
-}
 
 //UNTESTED
 //Checks if entity A is hostile to entity B
@@ -320,17 +267,4 @@ struct tile ***entmove( struct tile ***eptr, int dx, int dy )
 		( *t )->action( t, etile, ACT_LEAVE );
 
 	return eptr;
-}
-
-void ent_destroy( )
-{
-	unsigned int i;
-
-	for( i = 0; i < enttcnt; i++ )
-	{
-		al_destroy_bitmap( entt[i].sprite );
-	}
-
-	free( entt );
-
 }

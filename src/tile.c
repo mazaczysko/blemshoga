@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "map.h"
 #include "tileaction.h"
 #include "loadtile.h"
 #include "tile.h"
@@ -69,6 +70,44 @@ int tiles_init( const char *path )
 		else
 		{
 			fprintf( stderr, "error loading %s\n", filename );
+		}
+	}
+
+	closedir( d );
+	return 0;
+}
+
+//Loads entity files from directory
+//DO NOT CALL DURING THE GAME (realloc)
+int ent_init( const char *path )
+{
+	char filename[PATH_MAX];
+	const char *ext;
+	struct tile t, *entarr;
+
+	DIR *d = opendir( path );
+	struct dirent *dent;
+
+	assert( d != NULL );
+
+	while ( ( dent = readdir( d ) ) != NULL )
+	{
+		//Accept only *.ent files
+		ext = strrchr( dent->d_name, '.' );
+		if ( ext == NULL ) continue;
+		if ( strcmp( ext + 1, "ent" ) ) continue;
+
+		assert( snprintf( filename, PATH_MAX, "%s/%s", path, dent->d_name ) != 0 );
+		if ( !loadtile( filename, &t ) )
+		{
+			entarr = realloc( tiles, ( tilecnt + 1 ) * sizeof( struct tile ) );
+			assert( entarr != NULL );
+			tiles = entarr;
+			tiles[tilecnt++] = t;
+		}
+		else
+		{
+			fprintf( stderr, "entity loading failed - '%s' skipped!\n", dent->d_name );
 		}
 	}
 
