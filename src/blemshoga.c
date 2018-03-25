@@ -209,7 +209,9 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( int argc, char** argv )
 {
+	//TEMP
 	fprintf( stderr, "WARNING: WALL IS GROUND TEMPORARILY!!!\n");
+
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
