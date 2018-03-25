@@ -8,7 +8,7 @@
 #include <allegro5/allegro_acodec.h>
 #include "map.h"
 #include "tile.h"
-#include "gene.h"
+#include "lvgen.h"
 #include "music.h"
 #include "ent.h"
 #include "blemshoga.h"
@@ -209,6 +209,7 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( int argc, char** argv )
 {
+	fprintf( stderr, "WARNING: WALL IS GROUND TEMPORARILY!!!\n");
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
@@ -260,13 +261,13 @@ int main( int argc, char** argv )
 
 
 	//TEMP test init
-	map_init( 32, 32, 16 );
+	map_init( 50, 50, 16 );
 	tiles_init( "./resources/tiles" );
 	ent_init( "./resources/ent" );
 
 	//TEMP player init
-	player.ent.x = 0;
-	player.ent.y = 0;
+	player.ent.x = 25;
+	player.ent.y = 25;
 	player.name = "player";
 	player.spritename = "./resources/ent/player.png";
 	player.solid = 1;
@@ -298,9 +299,9 @@ int main( int argc, char** argv )
 	//	for ( j = 0; j < map.height; j++ )
 	//		mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
-	//pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
     //
-	// mapdroptile( 5, 5, tile( "vase" ) );
+	//mapdroptile( 5, 5, tile( "vase" ) );
 	// spawn( "box", 11, 11 );
     //
 	// spawn( "rat", 7, 7 );
@@ -317,10 +318,7 @@ int main( int argc, char** argv )
 	// mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
 	// mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
 
-	makeroom( 5, 0, 7, 5, 3 );
-	makecorridor( 3, 7, 5, 3 );
-
-
+	genlvl( 25, 25, 20, 10 );
 
 
 	//Enter main game loop
