@@ -17,6 +17,13 @@ struct net
 	float dist;
 };
 
+struct corr
+{
+	int ax, ay;
+	int bx, by;
+	int mx, my; //Middle
+};
+
 int rangedrandom( int min, int max )
 {
 	return rand( ) % ( max + 1 - min ) + min;
@@ -105,11 +112,106 @@ void drawroom( struct room* rooms, int cnt )
 	}
 }
 
+void drawcorr( struct corr *corr, int cnt )
+{
+	int i, j;
+
+	if( corr == NULL )
+		return;
+
+	for( int i = 0; i < cnt - 1; i++ )
+	{
+		printf("Corr nr %d: ax=%d, ay=%d, bx=%d, by=%d, mx=%d, my=%d\n", i, corr[i].ax, corr[i].ay, corr[i].bx, corr[i].by, corr[i].mx, corr[i].my );
+		printf("Drawing Verticals\n");
+		//Vertical
+		if( corr[i].mx == corr[i].ax )
+		{
+			if( corr[i].ay < corr[i].my )
+			{
+				for( j = corr[i].ay; j <= corr[i].my; j++ )
+				{
+					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					printf("x=%d, y=%d\n", corr[i].mx, j );
+				}
+			}
+			else
+			{
+				for( j = corr[i].ay; j >= corr[i].my; j-- )
+				{
+					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					printf("x=%d, y=%d\n", corr[i].mx, j );
+				}
+			}
+		}
+		else
+		{
+			if( corr[i].by < corr[i].my )
+			{
+				for( j = corr[i].by; j <= corr[i].my; j++ )
+				{
+					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					printf("x=%d, y=%d\n", corr[i].mx, j );
+				}
+			}
+			else
+			{
+				for( j = corr[i].by; j >= corr[i].my; j-- )
+				{
+					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					printf("x=%d, y=%d\n", corr[i].mx, j );
+				}
+			}
+		}
+
+		printf("Drawing Horizontal\n");
+		//Horizontal
+		if( corr[i].my == corr[i].ay )
+		{
+			if( corr[i].ax < corr[i].mx )
+			{
+				for( j = corr[i].ax; j <= corr[i].mx; j++ )
+				{
+						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						printf("x=%d, y=%d\n", j, corr[i].my);
+				}
+			}
+			else
+			{
+				for( j = corr[i].ax; j >= corr[i].mx; j-- )
+				{
+						mapputtile( j, corr[i].my,  MAP_LFLOOR, tile( "stone floor") );
+						printf("x=%d, y=%d\n", j, corr[i].my);
+				}
+			}
+		}
+		else
+		{
+			if( corr[i].bx < corr[i].mx )
+			{
+				for( j = corr[i].bx; j <= corr[i].mx; j++ )
+				{
+						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						printf("x=%d, y=%d\n", j, corr[i].my);
+				}
+			}
+			else
+			{
+				for( j = corr[i].bx; j >= corr[i].mx; j-- )
+				{
+						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						printf("x=%d, y=%d\n", j, corr[i].my);
+				}
+			}
+		}
+		printf("\n");
+	}
+}
+
 struct net* mknet( struct room *rooms, int cnt)
 {
 	int i, j, k, c = 0, ok;
 	float dist;
-	struct net *net = calloc( 1024, sizeof( struct net ) );
+	struct net *net = calloc( cnt*(cnt - 1)/2, sizeof( struct net ) );
 
 	for( i = 0; i < cnt; i++ )
 	{
@@ -151,7 +253,7 @@ struct net* mknet( struct room *rooms, int cnt)
 struct net *spantree( struct room *rooms, struct net *net, int cnt )
 {
 	int i, j = 0, k, id;
-	struct net *spantree = calloc( cnt*(cnt - 1)/2 - 1, sizeof( struct net ) );
+	struct net *spantree = calloc( cnt - 1, sizeof( struct net ) );
 
 	for( i = 0; i < cnt*(cnt - 1)/2; i++)
 	{
@@ -187,6 +289,33 @@ struct net *spantree( struct room *rooms, struct net *net, int cnt )
 	return spantree;
 }
 
+struct corr* net2corr( struct net *net, int cnt )
+{
+	struct corr *corr = calloc( cnt - 1, sizeof( struct corr ) );
+	int i;
+
+	for( i = 0; i < cnt - 1; i++ )
+	{
+		corr[i].ax = floor( net[i].r1->x );
+		corr[i].ay = floor( net[i].r1->y );
+		corr[i].bx = floor( net[i].r2->x );
+		corr[i].by = floor( net[i].r2->y );
+
+		if( (rand( ) % 10000) / 10000.0 < 0.5 )
+		{
+			corr[i].mx = corr[i].ax;
+			corr[i].my = corr[i].by;
+		}
+		else
+		{
+			corr[i].mx = corr[i].bx;
+			corr[i].my = corr[i].ay;
+		}
+	}
+	return corr;
+}
+
+
 int genlvl( int gx, int gy, int gr, int room_cnt )
 {
 	srand( time(NULL) );
@@ -195,10 +324,11 @@ int genlvl( int gx, int gy, int gr, int room_cnt )
 
 	net = spantree( rooms, net, room_cnt);
 
+	struct corr *corr = net2corr( net, room_cnt );
+
 	drawroom( rooms, room_cnt );
+	drawcorr( corr, room_cnt );
 
-
-	srand( time(NULL) );
 
 
 return 0;
