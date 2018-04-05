@@ -136,8 +136,9 @@ int mapdroptile( int x, int y, struct tile* item )
 	{
 		t = maptile( x, y, i );
 		if ( t != NULL && *t == NULL )
-			*t = item;
+		{	*t = item;
 			return 0;
+		}
 	}
 
 	return 1;
