@@ -209,9 +209,6 @@ int gameloop( ALLEGRO_DISPLAY *win )
 
 int main( int argc, char** argv )
 {
-	//TEMP
-	fprintf( stderr, "WARNING: WALL IS GROUND TEMPORARILY!!!\n");
-
 	srand( time( NULL ) );
 
 	ALLEGRO_DISPLAY *win;
@@ -320,7 +317,7 @@ int main( int argc, char** argv )
 	// mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
 	// mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
 
-	genlvl( 25, 25, 20, 10 );
+	genlvl( 25, 25, 20, 7 );
 
 
 	//Enter main game loop

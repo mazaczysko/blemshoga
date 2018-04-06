@@ -69,8 +69,8 @@ struct room* spread( int gx, int gy, float gr, int cnt )
 		r = gr* ((rand( ) % 10000) / 10000.0);
 		x = gx+ floor( cos(ang) * r );
 		y = gy+ floor( sin(ang) * r );
-		w = rangedrandom( 2, 10 );
-		h = rangedrandom( 2, 10 );
+		w = rangedrandom( 4, 10 );
+		h = rangedrandom( 4, 10 );
 
 		for( j = 0; j < i; j++ )
 			if( roomcoll( mkroom( x, y, w, h, i ), rooms + j, 5 ) )
@@ -119,7 +119,7 @@ void drawcorr( struct corr *corr, int cnt )
 	if( corr == NULL )
 		return;
 
-	for( int i = 0; i < cnt - 1; i++ )
+	for( i = 0; i < cnt - 1; i++ )
 	{
 		printf("Corr nr %d: ax=%d, ay=%d, bx=%d, by=%d, mx=%d, my=%d\n", i, corr[i].ax, corr[i].ay, corr[i].bx, corr[i].by, corr[i].mx, corr[i].my );
 		printf("Drawing Verticals\n");
@@ -131,6 +131,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].ay; j <= corr[i].my; j++ )
 				{
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
+						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -139,6 +141,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].ay; j >= corr[i].my; j-- )
 				{
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
+						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -150,6 +154,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].by; j <= corr[i].my; j++ )
 				{
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
+						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -158,6 +164,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].by; j >= corr[i].my; j-- )
 				{
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
+					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
+						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -172,6 +180,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].ax; j <= corr[i].mx; j++ )
 				{
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
+							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -180,6 +190,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].ax; j >= corr[i].mx; j-- )
 				{
 						mapputtile( j, corr[i].my,  MAP_LFLOOR, tile( "stone floor") );
+						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
+							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -191,6 +203,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].bx; j <= corr[i].mx; j++ )
 				{
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
+							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -199,6 +213,8 @@ void drawcorr( struct corr *corr, int cnt )
 				for( j = corr[i].bx; j >= corr[i].mx; j-- )
 				{
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
+						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
+							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
