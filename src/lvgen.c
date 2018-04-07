@@ -133,6 +133,12 @@ void drawcorr( struct corr *corr, int cnt )
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
 					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
 						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
+
+					if( *maptile( corr[i].mx - 1, j, MAP_LFLOOR ) == NULL )
+					 	mapputtile( corr[i].mx - 1, j, MAP_LSOLID, tile( "stone wall") );
+
+					if( *maptile( corr[i].mx + 1, j, MAP_LFLOOR ) == NULL )
+						 	mapputtile( corr[i].mx + 1, j, MAP_LSOLID, tile( "stone wall" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -143,6 +149,12 @@ void drawcorr( struct corr *corr, int cnt )
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
 					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
 						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
+
+					if( *maptile( corr[i].mx - 1, j, MAP_LFLOOR ) == NULL )
+					 	mapputtile( corr[i].mx - 1, j, MAP_LSOLID, tile( "stone wall") );
+
+					if( *maptile( corr[i].mx + 1, j, MAP_LFLOOR ) == NULL )
+						 	mapputtile( corr[i].mx + 1, j, MAP_LSOLID, tile( "stone wall" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -156,6 +168,12 @@ void drawcorr( struct corr *corr, int cnt )
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
 					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
 						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
+
+					if( *maptile( corr[i].mx - 1, j, MAP_LFLOOR ) == NULL )
+					 	mapputtile( corr[i].mx - 1, j, MAP_LSOLID, tile( "stone wall") );
+
+					if( *maptile( corr[i].mx + 1, j, MAP_LFLOOR ) == NULL )
+						 	mapputtile( corr[i].mx + 1, j, MAP_LSOLID, tile( "stone wall" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -166,6 +184,12 @@ void drawcorr( struct corr *corr, int cnt )
 					mapputtile( corr[i].mx, j, MAP_LFLOOR, tile( "stone floor") );
 					if( *maptile( corr[i].mx, j, MAP_LSOLID ) == tile( "stone wall") )
 						mapputtile( corr[i].mx, j, MAP_LSOLID, tile( "door (closed)" ) );
+
+					if( *maptile( corr[i].mx - 1, j, MAP_LFLOOR ) == NULL )
+					 	mapputtile( corr[i].mx - 1, j, MAP_LSOLID, tile( "stone wall") );
+
+					if( *maptile( corr[i].mx + 1, j, MAP_LFLOOR ) == NULL )
+						 	mapputtile( corr[i].mx + 1, j, MAP_LSOLID, tile( "stone wall" ) );
 					printf("x=%d, y=%d\n", corr[i].mx, j );
 				}
 			}
@@ -182,6 +206,12 @@ void drawcorr( struct corr *corr, int cnt )
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
 						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
 							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
+
+						if( *maptile( j, corr[i].my - 1, MAP_LFLOOR ) == NULL )
+							mapputtile( j, corr[i].my - 1, MAP_LSOLID, tile( "stone wall" ) );
+
+						if( *maptile( j, corr[i].my + 1, MAP_LFLOOR ) == NULL )
+						 	mapputtile( j, corr[i].my + 1, MAP_LSOLID, tile( "stone wall" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -192,6 +222,12 @@ void drawcorr( struct corr *corr, int cnt )
 						mapputtile( j, corr[i].my,  MAP_LFLOOR, tile( "stone floor") );
 						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
 							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
+
+						if( *maptile( j, corr[i].my - 1, MAP_LFLOOR ) == NULL )
+							mapputtile( j, corr[i].my - 1, MAP_LSOLID, tile( "stone wall" ) );
+
+						if( *maptile( j, corr[i].my + 1, MAP_LFLOOR ) == NULL )
+						 	mapputtile( j, corr[i].my + 1, MAP_LSOLID, tile( "stone wall" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -205,6 +241,12 @@ void drawcorr( struct corr *corr, int cnt )
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
 						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
 							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
+
+						if( *maptile( j, corr[i].my - 1, MAP_LFLOOR ) == NULL )
+							mapputtile( j, corr[i].my - 1, MAP_LSOLID, tile( "stone wall" ) );
+
+						if( *maptile( j, corr[i].my + 1, MAP_LFLOOR ) == NULL )
+						 	mapputtile( j, corr[i].my + 1, MAP_LSOLID, tile( "stone wall" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
@@ -215,6 +257,12 @@ void drawcorr( struct corr *corr, int cnt )
 						mapputtile( j, corr[i].my, MAP_LFLOOR, tile( "stone floor") );
 						if( *maptile( j, corr[i].my, MAP_LSOLID ) == tile( "stone wall") )
 							mapputtile( j, corr[i].my, MAP_LSOLID, tile( "door (closed)" ) );
+
+						if( *maptile( j, corr[i].my - 1, MAP_LFLOOR ) == NULL )
+							mapputtile( j, corr[i].my - 1, MAP_LSOLID, tile( "stone wall" ) );
+
+						if( *maptile( j, corr[i].my + 1, MAP_LFLOOR ) == NULL )
+						 	mapputtile( j, corr[i].my + 1, MAP_LSOLID, tile( "stone wall" ) );
 						printf("x=%d, y=%d\n", j, corr[i].my);
 				}
 			}
