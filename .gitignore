@@ -1,0 +1,8 @@
+blemshoga
+*.o
+*.gch
+*.gno
+*.swp
+*.log
+*.tmp
+.gdb_history
