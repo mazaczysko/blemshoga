@@ -14,6 +14,7 @@ link_libraries(
 	"sfml-system"
 	"sfml-graphics"
 	"sfml-audio"
+	"sfml-window"
 )
 
 add_executable(
