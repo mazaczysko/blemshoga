@@ -1,6 +1,0 @@
-name door (open)
-sprite ./resources/tiles/door.png
-action door
-animframe 1
---snd 1
-door_open ./resources/sounds/door_open.wav

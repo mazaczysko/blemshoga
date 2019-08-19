@@ -1,7 +1,0 @@
-solid
-name door (closed)
-sprite ./resources/tiles/door.png
-action door
-animframe 0
---snd 1
-door_close ./resources/sounds/smash.wav

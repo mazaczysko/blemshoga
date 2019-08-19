@@ -1,6 +1,0 @@
-name vase
-sprite ./resources/tiles/vase.png
-action vase
-animframe 0
---snd 1
-break ./resources/sounds/break.wav
