@@ -1,5 +1,0 @@
-sprite ./resources/tiles/blood.png
-action blood
-name blood
---snd 1
-mluck ./resources/sounds/mluck.wav
