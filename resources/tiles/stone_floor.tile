@@ -1,0 +1,3 @@
+sprite ./resources/tiles/floor_stone.png
+ground
+name stone floor
