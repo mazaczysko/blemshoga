@@ -6,3 +6,5 @@ blemshoga
 *.log
 *.tmp
 .gdb_history
+*.swp
+build
