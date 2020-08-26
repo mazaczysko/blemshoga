@@ -3,6 +3,9 @@
 
 #include "allegro.h"
 
+
+extern void resmgr_init_bitmap_storage( void );
+
 /**
 	Checks whether the image is known to the resource manager
 */

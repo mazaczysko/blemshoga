@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
 	lapi_init();
 
 	// TODO load resources here
+	tile *t = tile_load("resources/tiles/test.lua");
+	tile_destroy(t);
 
 	// Allegro init
 	al_init();

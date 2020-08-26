@@ -1,0 +1,3 @@
+tile = {
+	name = "test hahahahaha"
+}

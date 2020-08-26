@@ -14,9 +14,17 @@ int lapi_init(void)
 	}
 	luaL_openlibs(L);
 
-	log_debug("Lua init done");
+	// Init tiles array
+	lua_newtable(L);
+	lua_setglobal(L, "TILES");
 
+	log_debug("Lua init done");
 	return 0;	
+}
+
+lua_State *lapi_get(void)
+{
+	return L;
 }
 
 void lapi_destroy(void)

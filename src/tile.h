@@ -9,6 +9,9 @@
 typedef struct tile
 {
 	ALLEGRO_BITMAP *sprite;
+	
+	char *lua_source;
+	char *name;
 
 } tile;
 
