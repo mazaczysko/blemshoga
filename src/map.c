@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <time.h>
 
+struct map map;
+
 void map_init( int width, int height, int depth )
 {
   	map.width = width;

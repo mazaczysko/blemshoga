@@ -7,12 +7,13 @@
 #define MAP_LENT 14
 #define MAP_LSOLID 15
 
-struct
+struct map
 {
 	int width, height, depth;
 	struct tile **map;
-} map;
+};
 
+extern struct map map;
 extern void map_init( int width, int height, int depth );
 extern struct tile** maptile( int x, int y, int z );
 extern struct tile** maptoptile( int x, int y );
