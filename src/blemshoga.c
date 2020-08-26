@@ -2,8 +2,10 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
+#include "allegro.h"
+#include "log.h"
+#include "lapi.h"
+#include "tile.h"
 
 void main_draw(void)
 {
@@ -12,6 +14,15 @@ void main_draw(void)
 
 int main(int argc, char *argv[])
 {
+	// Log init
+	log_init(stderr, argv[0]);
+	log_info("Starting Blemshoga...");
+
+	// Lua API init
+	lapi_init();
+
+	// TODO load resources here
+
 	// Allegro init
 	al_init();
 	al_install_keyboard();
@@ -19,7 +30,7 @@ int main(int argc, char *argv[])
 	ALLEGRO_DISPLAY *display = al_create_display(800, 600);
 	assert(display != NULL);
 
-	ALLEGRO_TIMER *draw_timer = al_create_timer(1.f / 60.f);
+	ALLEGRO_TIMER *draw_timer = al_create_timer(1.f / 30.f);
 	assert(draw_timer != NULL);
 	al_start_timer(draw_timer);
 
