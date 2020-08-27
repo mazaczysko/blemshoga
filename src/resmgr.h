@@ -26,4 +26,7 @@ extern ALLEGRO_BITMAP *resmgr_load_bitmap(const char *path);
 */
 extern void resmgr_unload_bitmap(const char *name);
 
+
+extern void resmgr_destroy_bitmap_storage();
+
 #endif

@@ -38,6 +38,10 @@ ALLEGRO_BITMAP *resmgr_load_bitmap( const char *path )
 {
     log_info( "Loading '%s'...", path );
 
+    char *c = getcwd(NULL, 0);
+        log_debug("cwd: %s", c);
+    free(c);
+
     ALLEGRO_BITMAP *bmp = al_load_bitmap( path );
     
     if( !bmp )
@@ -55,7 +59,7 @@ ALLEGRO_BITMAP *resmgr_load_bitmap( const char *path )
     }
 
     //Realloc paths array
-    char **tmp = realloc( bitmap_storage.paths, bitmap_storage.count + 1 * sizeof( const char* ) );
+    char **tmp = realloc( bitmap_storage.paths, ( bitmap_storage.count + 1 ) * sizeof( const char* ) );
     if( !tmp )
     {
         if (tmp_ptr != bitmap_storage.bitmaps) free(tmp_ptr);
@@ -99,4 +103,12 @@ void resmgr_unload_bitmap( const char *path )
     bitmap_storage.bitmaps[pos] = bitmap_storage.bitmaps[bitmap_storage.count - 1];
     bitmap_storage.paths[pos] = bitmap_storage.paths[bitmap_storage.count - 1];
     bitmap_storage.count--;
+}
+
+void resmgr_destroy_bitmap_storage()
+{
+    while (bitmap_storage.count)
+        resmgr_unload_bitmap(bitmap_storage.paths[0]);
+    free( bitmap_storage.bitmaps );
+    free( bitmap_storage.paths );
 }

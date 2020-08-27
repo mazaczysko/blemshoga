@@ -5,7 +5,10 @@ MAP = setmetatable({}, {
 		local id = tostring(x) .. "_" .. tostring(y)
 
 		if self[id] == nil then
-			self[id] = {}
+			-- Create tile stack here
+			self[id] = {
+				
+			}
 		end
 		return self[id]
 	end

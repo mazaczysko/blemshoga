@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <lua.h>
+
 #define TEXT_RESET    "\x1B[0m"
 #define TEXT_RED      "\x1B[31m"
 #define TEXT_GREEN    "\x1B[32m"
@@ -19,5 +21,7 @@
 	Returns NULL on error
 */
 extern char *slurp_file(const char *path);
+
+extern int safe_lua_dofile(lua_State *L, const char *path);
 
 #endif

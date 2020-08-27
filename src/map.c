@@ -1,14 +1,28 @@
-#include "allegro.h"
 #include "map.h"
+#include "allegro.h"
 #include "utils.h"
 
-void map_draw( )
+void map_get_tile_stack( lua_State *L, int x, int y )
 {
-	int width = 800, height = 600;
-	
-	for( int x = 0; x < width; x++ )
-		for( int y = 0; y < height; y++ )
-			for( int z = 0; z <= LMAP(x,y).size; z++ )
-			{
-				al_draw_tinted_scaled_bitmap( LMAP(x,y)[z], 0, 0, 0, TILE_SIZE, TILE_SIZE, x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE, 0 )
-			}
+	lua_getglobal(L, "MAP");
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
+	lua_call(L, 2, 1);
+}
+
+int map_get_tile_stack_size( lua_State *L, int x, int y )
+{
+	map_get_tile_stack( L, x, y );
+	lua_len( L, -1 );
+	lua_replace( L, -2 );
+	int len = lua_tointeger( L, -1 );
+	lua_pop( L, 1 );
+	return len;
+}
+
+void map_get_tile( lua_State *L, int x, int y, int z )
+{
+	map_get_tile_stack( L, x, y );
+	lua_gettable( L, z + 1 );
+	lua_replace( L, -2 );
+}

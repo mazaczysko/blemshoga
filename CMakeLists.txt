@@ -10,6 +10,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -fno-omit-frame-pointer -fs
 link_libraries(
 	"allegro"
 	"allegro_font"
+	"allegro_image"
 	"lua"
 )
 
@@ -21,6 +22,7 @@ add_executable(
 	"${PROJECT_SOURCE_DIR}/src/tile.c"
 	"${PROJECT_SOURCE_DIR}/src/resmgr.c"
 	"${PROJECT_SOURCE_DIR}/src/utils.c"
+	"${PROJECT_SOURCE_DIR}/src/map.c"
 )
 
 

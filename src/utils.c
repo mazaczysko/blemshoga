@@ -1,6 +1,9 @@
 #include "utils.h"
+#include "log.h"
+#include "lapi.h"
 #include <stdio.h>
 #include <stdlib.h>
+
 
 char *slurp_file(const char *path)
 {
@@ -18,4 +21,17 @@ char *slurp_file(const char *path)
 
 	fclose(f);	
 	return buf;
+}
+
+int safe_lua_dofile(lua_State *L, const char *path)
+{
+	log_debug("running '%s'", path);
+	int err = luaL_dofile(L, path);
+	if (err)
+	{
+		log_error("%s: %s", path, lua_tostring(L, -1));
+		lua_pop(L, 1);
+	}
+
+	return err;
 }

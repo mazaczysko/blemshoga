@@ -3,13 +3,65 @@
 #include <stdbool.h>
 
 #include "allegro.h"
+#include "resmgr.h"
+#include "map.h"
 #include "log.h"
 #include "lapi.h"
 #include "tile.h"
 
+/*
+	sx/sy - screen x/y
+	mx/my - source map x/y
+	w, h - map region w/h
+	
+	
+*/
+void draw_map(int sx, int sy, int mx, int my, int w, int h)
+{
+	// Lua context
+	lua_State *L = lapi_get();
+
+	//! TEMP
+	const int TILE_SIZE = 32;
+
+	for (int x = mx; x < mx + w; x++)
+	{
+		for (int y = my; y < my + h; y++)
+		{
+			// Request tiles from lua
+			map_get_tile_stack(L, x, y);
+
+			// Iterate tile stack
+			lua_pushnil(L);
+			while (lua_next(L, -2))
+			{
+				// k = -2, v = -1
+				lua_getfield(L, -1, "sprite");
+				const char *sprite_name = lua_tostring(L, -1);
+				lua_pop(L, 2);
+
+				al_draw_scaled_bitmap(
+					resmgr_get_bitmap( sprite_name ),
+					0,
+					0,
+					TILE_SIZE,
+					TILE_SIZE,
+					sx + x * TILE_SIZE,
+					sy + y * TILE_SIZE,
+					TILE_SIZE,
+					TILE_SIZE,
+					0
+				);
+			}
+
+			lua_pop(L, 1); // Pop MAP
+		}
+	}
+}
+
 void main_draw(void)
 {
-
+	draw_map(0, 0, 0, 0, 24, 20);
 }
 
 int main(int argc, char *argv[])
@@ -24,8 +76,9 @@ int main(int argc, char *argv[])
 	al_init();
 	al_init_image_addon();
 	al_install_keyboard();
+	log_info("Allegro init done...");
 
-	ALLEGRO_DISPLAY *display = al_create_display(800, 600);
+	ALLEGRO_DISPLAY *display = al_create_display(32 * 24, 32 * 20);
 	assert(display != NULL);
 
 	ALLEGRO_TIMER *draw_timer = al_create_timer(1.f / 30.f);
@@ -46,10 +99,21 @@ int main(int argc, char *argv[])
 	// Lua API init
 	err = lapi_init();
 	assert(!err && "Lua init failed!");
+	lua_State *L = lapi_get();
 
-	// TODO load resources here
-	tile *t = tile_load("resources/tiles/test.lua");
-	tile_destroy(t);
+	// Run core/init script
+	if (safe_lua_dofile(L, "resources/lua/core.lua"))
+		return 1;
+
+	//Run load script
+	if (safe_lua_dofile(L, "resources/lua/load.lua"))
+		return 1;
+
+	// Run post-load script
+	if (safe_lua_dofile(L, "resources/lua/post-load.lua"))
+		return 1;
+
+
 
 	// Main loop
 	bool alive = true;
@@ -81,6 +145,10 @@ int main(int argc, char *argv[])
 		}
 		while (al_get_next_event(event_queue, &ev));
 	}
+
+	resmgr_destroy_bitmap_storage();
+	lapi_destroy();
+	log_destroy();
 
 	// Cleanup
 	al_destroy_font(default_font);

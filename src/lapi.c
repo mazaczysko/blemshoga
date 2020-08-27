@@ -1,7 +1,17 @@
 #include "lapi.h"
 #include "log.h"
+#include "tile.h"
 
 lua_State *L = NULL;
+
+static int lapi_loadtile(lua_State *L)
+{
+	const char *name = lua_tostring(L, -1);
+	log_debug("test: %s", name);
+	tile_load(name);
+	lua_pop(L, 1);
+	return 0;
+}
 
 int lapi_init(void)
 {
@@ -14,13 +24,9 @@ int lapi_init(void)
 	}
 	luaL_openlibs(L);
 
-	// Load blemshoga.lua
-	if (luaL_dofile(L, "resources/lua/blemshoga.lua"))
-	{
-		log_error("blemshoga.lua error: %s", lua_tostring(L, -1));
-		lua_pop(L, 1);
-		return 1;
-	}
+	// C functions
+	lua_pushcfunction(L, lapi_loadtile);
+	lua_setglobal(L, "load_tile");
 
 	log_debug("Lua init done");
 	return 0;	

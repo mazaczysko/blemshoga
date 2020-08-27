@@ -20,6 +20,5 @@ typedef struct tile
 */
 extern tile *tile_load(const char *path);
 
-extern void tile_destroy(tile *t);
 
 #endif
