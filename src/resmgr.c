@@ -13,6 +13,8 @@ static struct
 //Set default values for bitmap_storage struct components
 void resmgr_init_bitmap_storage( void )
 {
+    log_info( "Initializing bitmap_storage...");
+
     bitmap_storage.count = 0;
     bitmap_storage.paths = NULL;
     bitmap_storage.bitmaps = NULL;
@@ -32,8 +34,10 @@ bool resmgr_has_bitmap( const char *path )
     return resmgr_get_bitmap_offset(path) != -1;
 }
 
-static ALLEGRO_BITMAP *resmgr_load_bitmap( const char *path )
+ALLEGRO_BITMAP *resmgr_load_bitmap( const char *path )
 {
+    log_info( "Loading '%s'...", path );
+
     ALLEGRO_BITMAP *bmp = al_load_bitmap( path );
     
     if( !bmp )
@@ -85,6 +89,8 @@ ALLEGRO_BITMAP *resmgr_get_bitmap( const char *path )
 
 void resmgr_unload_bitmap( const char *path )
 {
+    log_info( "Unloading '%s'...", path );
+
     int pos = resmgr_get_bitmap_offset(path);
     if( pos == -1 ) return;
 

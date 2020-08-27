@@ -2,6 +2,7 @@
 #include <string.h>
 #include "utils.h"
 #include "log.h"
+#include "resmgr.h"
 
 extern tile *tile_load(const char *path)
 {
@@ -41,6 +42,28 @@ extern tile *tile_load(const char *path)
 	lua_getglobal(L, "tile");
 	lua_setfield(L, -2, t->name);
 	lua_pop(L, 1);
+
+	// Preload all sprites
+	lua_getglobal(L, "tile");
+	lua_getfield(L, -1, "sprites");
+	if (!lua_istable(L, -1))
+	{
+		log_warning("tile does not declare sprites!");
+	}
+	else
+	{
+		log_debug("preloading sprites for '%s'", t->name);
+		lua_pushnil(L);
+		while (lua_next(L, -2))
+		{
+			// Key is now at -2
+			// Value is now at -1
+			const char *path = lua_tostring(L, -1);
+			resmgr_load_bitmap(path);
+			lua_pop(L, 1);
+		}
+		lua_pop(L, 1);
+	}
 
 	log_info("loaded tile '%s'", path);
 	log_debug("loaded name: %s", t->name);

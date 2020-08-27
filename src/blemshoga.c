@@ -14,19 +14,15 @@ void main_draw(void)
 
 int main(int argc, char *argv[])
 {
+	int err;
+
 	// Log init
 	log_init(stderr, argv[0]);
 	log_info("Starting Blemshoga...");
 
-	// Lua API init
-	lapi_init();
-
-	// TODO load resources here
-	tile *t = tile_load("resources/tiles/test.lua");
-	tile_destroy(t);
-
 	// Allegro init
 	al_init();
+	al_init_image_addon();
 	al_install_keyboard();
 
 	ALLEGRO_DISPLAY *display = al_create_display(800, 600);
@@ -46,6 +42,14 @@ int main(int argc, char *argv[])
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(draw_timer));
+
+	// Lua API init
+	err = lapi_init();
+	assert(!err && "Lua init failed!");
+
+	// TODO load resources here
+	tile *t = tile_load("resources/tiles/test.lua");
+	tile_destroy(t);
 
 	// Main loop
 	bool alive = true;

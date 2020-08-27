@@ -14,9 +14,13 @@ int lapi_init(void)
 	}
 	luaL_openlibs(L);
 
-	// Init tiles array
-	lua_newtable(L);
-	lua_setglobal(L, "TILES");
+	// Load blemshoga.lua
+	if (luaL_dofile(L, "resources/lua/blemshoga.lua"))
+	{
+		log_error("blemshoga.lua error: %s", lua_tostring(L, -1));
+		lua_pop(L, 1);
+		return 1;
+	}
 
 	log_debug("Lua init done");
 	return 0;	
