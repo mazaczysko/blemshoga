@@ -21,17 +21,22 @@ struct tile **pptr;
 //Camera is limited to map bounds
 void camfollow( int *cx, int *cy, int x, int y, int w, int h, int mx, int my )
 {
-	//TODO enfancy this stuff
-	//if ( *cx > x - mx - w ) *cx = x - mx - w;
-	//if ( *cx < x + mx - w ) *cx = x + mx - w;
-	*cx = x - w / 2;
-	*cy = y - h / 2;
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define CLAMP(x, a, b) (MAX(MIN((x), (b)), (a)))
 
-	//Bounds
-	if ( *cx < 0 ) *cx = 0;
-	if ( *cy < 0 ) *cy = 0;
-	if ( *cx + w >= map.width ) *cx = map.width - 1 - w;
-	if ( *cy + h >= map.height ) *cy = map.height - 1 - h;
+	const int frame = 3;
+	int sx = x - *cx;
+	int sy = y - *cy;
+
+	sx = CLAMP(sx, frame, w - frame);
+	sy = CLAMP(sy, frame, h - frame);
+	*cx = CLAMP(x - sx, 0, map.width - 1 - w);
+	*cy = CLAMP(y - sy, 0, map.height - 1 - h);
+	
+#undef MIN
+#undef MAX
+#undef CLAMP
 }
 
 //Renders given portion of map on screen
