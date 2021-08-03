@@ -450,7 +450,7 @@ struct corr* net2corr( struct net *net, int cnt )
 }
 
 
-int genlvl( int gx, int gy, int gr, int room_cnt )
+int genlvl( int gx, int gy, int gr, int room_cnt, struct tile *player, struct tile ***pptr )
 {
 	srand( time(NULL) );
 	struct room *rooms = spread( gx, gy, gr, room_cnt );
@@ -463,7 +463,15 @@ int genlvl( int gx, int gy, int gr, int room_cnt )
 	drawroom( rooms, room_cnt );
 	drawcorr( corr, room_cnt );
 
-
+	// Put the player in the first room
+	int px = rooms[0].x;
+	int py = rooms[0].y;
+	player->ent.x = px;
+	player->ent.y = py;
+	*pptr = mapputtile(px, py, MAP_LENT, player );
+	
+	free(net);
+	free(rooms);
 
 return 0;
 }

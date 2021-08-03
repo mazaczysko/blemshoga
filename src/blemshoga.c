@@ -303,7 +303,7 @@ int main( int argc, char** argv )
 	//	for ( j = 0; j < map.height; j++ )
 	//		mapputtile( i, j, MAP_LFLOOR, tile( "stone floor" ) );
 
-	pptr = mapputtile( player.ent.x, player.ent.y, MAP_LENT, &player );
+	
     //
 	//mapdroptile( 5, 5, tile( "vase" ) );
 	// spawn( "box", 11, 11 );
@@ -322,7 +322,7 @@ int main( int argc, char** argv )
 	// mapputtile( 8, 8, MAP_LSOLID, tile( "door (open)" ) );
 	// mapputtile( 2, 2, MAP_LSOLID, tile( "door (open)" ) );
 
-	genlvl( 25, 25, 20, 7 );
+	genlvl( 25, 25, 20, 7, &player, &pptr );
 
 
 	//Enter main game loop
