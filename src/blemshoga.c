@@ -324,6 +324,10 @@ int main( int argc, char** argv )
 
 	genlvl( 25, 25, 20, 7, &player, &pptr );
 
+	spawn( "rat", player.ent.x - 1, player.ent.y - 1 );
+	spawn( "rat", player.ent.x + 1, player.ent.y);
+	spawn( "box", player.ent.x - 2, player.ent.y);
+	mapdroptile( player.ent.x, player.ent.y + 2, tile("vase"));
 
 	//Enter main game loop
 	gameloop( win );
